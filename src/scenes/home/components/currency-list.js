@@ -1,13 +1,12 @@
 import React from 'react';
 import { Query } from 'regraph-request';
-import { ScrollView, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { CurrencyListItem } from './components/currency-list-item';
-import { Container } from '../../components/container';
+import { CurrencyListItem } from './currency-list-item';
 
 const CURRENCY_QUERY = `
 query AllCurrencies {
-  currencies(page: {skip: 0, limit: 10}, sort:{marketCapRank:ASC}) {
+  currencies(page: {skip: 0, limit: 20}, sort:{marketCapRank:ASC}) {
     totalCount
     data {
       id
@@ -22,7 +21,7 @@ query AllCurrencies {
 }
 `;
 
-export class CryptoListComponent extends React.Component {
+export class CurrencyListComponent extends React.Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired,
   };
@@ -44,12 +43,13 @@ export class CryptoListComponent extends React.Component {
         />
       );
     });
-    return (
-      <Container>
-        <ScrollView>{items}</ScrollView>
-      </Container>
-    );
+    return <View>{items}</View>;
   }
 }
 
-export const CryptoList = Query(CryptoListComponent, CURRENCY_QUERY);
+export const CurrencyList = Query(
+  CurrencyListComponent,
+  CURRENCY_QUERY,
+  () => {},
+  'https://alpha.blocktap.io/graphql'
+);

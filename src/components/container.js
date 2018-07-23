@@ -3,18 +3,15 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 
 export class Container extends React.Component {
-  static propTypes = {
-    children: PropTypes.object,
-  };
-
   render() {
-    return <View style={style.container}>{this.props.children}</View>;
+    return <View style={[style.container, this.props.style]}>{this.props.children}</View>;
   }
 }
 
 const style = StyleSheet.create({
   container: {
-    paddingTop: 40,
+    paddingTop: 42,
     flex: 1,
+    backgroundColor: '#f6f6f6',
   },
 });

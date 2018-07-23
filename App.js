@@ -1,10 +1,10 @@
 import { createStackNavigator } from 'react-navigation';
-import { CryptoList } from './src/scenes/currency-list/currency-list';
+import { Home } from './src/scenes/home/home';
 import { CurrencyDetail } from './src/scenes/currency-detail/currency-detail';
 
 const App = createStackNavigator(
   {
-    Home: CryptoList,
+    Home: Home,
     Detail: CurrencyDetail,
   },
   {
