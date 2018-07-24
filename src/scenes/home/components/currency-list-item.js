@@ -1,12 +1,14 @@
 import React from 'react';
-import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { View, TouchableWithoutFeedback, StyleSheet, Dimensions } from 'react-native';
 import { CLText } from '../../../components/cl-text';
 import PropTypes from 'prop-types';
+import { MiniGraph } from './mini-graph';
 
 export class CurrencyListItem extends React.Component {
   static propTypes = {
     onPress: PropTypes.func,
     currency: PropTypes.object,
+    quoteSymbol: PropTypes.string,
   };
 
   render() {
@@ -26,6 +28,15 @@ export class CurrencyListItem extends React.Component {
               <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
                 {currency.percentChange}
               </CLText>
+            </View>
+            <View style={styles.containerItem}>
+              <MiniGraph
+                width={70}
+                height={30}
+                isPositive={positiveChange}
+                quote={this.props.quoteSymbol}
+                currencyId={currency.symbol}
+              />
             </View>
           </View>
         </View>
@@ -54,7 +65,7 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 17 },
   subtitle: { fontSize: 10 },
-  containerItem: {},
+  containerItem: { width: Dimensions.get('window').width / 3 },
   positiveChange: {
     color: 'green',
   },

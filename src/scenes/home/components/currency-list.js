@@ -23,6 +23,7 @@ export class CurrencyList extends React.Component {
       <CurrencyListItem
         key={item.id}
         currency={item}
+        quoteSymbol={this.props.quoteSymbol}
         onPress={() => {
           navigate('Detail', { currencySymbol: item.symbol });
         }}
