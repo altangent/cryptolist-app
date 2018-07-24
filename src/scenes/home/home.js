@@ -7,12 +7,14 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { Container } from '../../components/container';
 import { CurrencyList } from './components/currency-list';
 import { Query } from 'regraph-request';
 import { QuotePicker } from './components/quote-picker';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const CURRENCY_QUERY = `
 query AllCurrencies {
@@ -87,6 +89,13 @@ export class HomeComponent extends React.Component {
         >
           <View style={styles.logoContainer}>
             <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
+            <TouchableOpacity
+              onPress={() => {
+                console.log('Search');
+              }}
+            >
+              <FontAwesome name="search" size={30} style={{ paddingTop: 10 }} />
+            </TouchableOpacity>
             <QuotePicker
               style={styles.quotePicker}
               onSelect={quoteSymbol => this.setState({ quoteSymbol })}
