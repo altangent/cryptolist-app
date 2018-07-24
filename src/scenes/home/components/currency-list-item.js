@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableWithoutFeedback, StyleSheet, Text, PixelRatio } from 'react-native';
+import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { CLText } from '../../../components/cl-text';
 import PropTypes from 'prop-types';
 
@@ -11,13 +11,22 @@ export class CurrencyListItem extends React.Component {
 
   render() {
     const { currency } = this.props;
+    let positiveChange = currency.percentChange >= 0;
 
     return (
       <TouchableWithoutFeedback onPress={() => this.props.onPress(currency.currencySymbol)}>
         <View style={styles.outerContainer}>
           <View style={styles.innerContainer}>
-            <CLText style={styles.subTitle}>{currency.currencySymbol}</CLText>
-            <CLText style={styles.title}>{currency.currencyName}</CLText>
+            <View style={styles.containerItem}>
+              <CLText style={styles.subtitle}>{currency.symbol}</CLText>
+              <CLText style={styles.title}>{currency.name}</CLText>
+            </View>
+            <View style={styles.containerItem}>
+              <CLText>{currency.price}</CLText>
+              <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
+                {currency.percentChange}
+              </CLText>
+            </View>
           </View>
         </View>
       </TouchableWithoutFeedback>
@@ -34,15 +43,22 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   innerContainer: {
-    // borderBottomWidth: 1 / PixelRatio.get(),
-    // borderBottomColor: '#ccc',
     backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 15,
     shadowColor: '#ccc',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.6,
     shadowRadius: 3,
   },
-  title: { fontSize: 20 },
+  title: { fontSize: 17 },
   subtitle: { fontSize: 10 },
+  containerItem: {},
+  positiveChange: {
+    color: 'green',
+  },
+  negativeChange: {
+    color: 'red',
+  },
 });

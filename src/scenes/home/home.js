@@ -1,21 +1,92 @@
 import React from 'react';
-import { View, ScrollView, Image, Dimensions, StyleSheet } from 'react-native';
+import {
+  View,
+  ScrollView,
+  Image,
+  Dimensions,
+  StyleSheet,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import { Container } from '../../components/container';
 import { CurrencyList } from './components/currency-list';
+import { Query } from 'regraph-request';
+import { QuotePicker } from './components/quote-picker';
 
-export class Home extends React.Component {
+const CURRENCY_QUERY = `
+query AllCurrencies {
+  currencies(page: {skip: 0, limit: 20}, sort: {marketCapRank: ASC}) {
+    data {
+      id
+      currencyName
+      currentSupply
+      currencySymbol
+      markets(aggregation: VWAP) {
+        data {
+          id
+          marketSymbol
+          ticker {
+            last
+            percentChange
+            baseVolume
+            quoteVolume
+          }
+        }
+      }
+    }
+  }
+  bitcoin: currency(currencySymbol: "BTC") {
+    markets {
+      data {
+        marketSymbol
+        ticker {
+          last
+        }
+      }
+    }
+  }
+}
+`;
+
+export class HomeComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.refresh = this.refresh.bind(this);
+  }
+
+  refresh() {
+    this.setState({ refreshing: true });
+    this.props.getData().then(() => {
+      this.setState({ refreshing: false });
+    });
+  }
+
   static propTypes = {
     navigation: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+  };
+
+  state = {
+    refreshing: false,
   };
 
   render() {
+    if (!this.props.data.currencies) {
+      return <ActivityIndicator />;
+    }
     const { navigate } = this.props.navigation;
     return (
       <Container>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />
+          }
+        >
           <View style={styles.logoContainer}>
             <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
+            {/* <QuotePicker /> */}
           </View>
           <CurrencyList {...this.props} />
         </ScrollView>
@@ -35,3 +106,10 @@ const styles = StyleSheet.create({
     resizeMode: Image.resizeMode.contain,
   },
 });
+
+export const Home = Query(
+  HomeComponent,
+  CURRENCY_QUERY,
+  () => {},
+  'https://alpha.blocktap.io/graphql'
+);

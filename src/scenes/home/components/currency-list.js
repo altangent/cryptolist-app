@@ -1,38 +1,24 @@
 import React from 'react';
-import { Query } from 'regraph-request';
 import { ActivityIndicator, View } from 'react-native';
 import PropTypes from 'prop-types';
 import { CurrencyListItem } from './currency-list-item';
+import { marketCapFormat } from './market-cap-formatter';
 
-const CURRENCY_QUERY = `
-query AllCurrencies {
-  currencies(page: {skip: 0, limit: 20}, sort:{marketCapRank:ASC}) {
-    totalCount
-    data {
-      id
-      currencyName
-      currentSupply
-      totalSupply
-      currencySymbol
-      marketCap
-      marketCapRank
-    }
-  }
-}
-`;
-
-export class CurrencyListComponent extends React.Component {
+export class CurrencyList extends React.Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired,
   };
 
   render() {
     const { navigate } = this.props.navigation;
-    if (!this.props.data.currencies) {
-      return <ActivityIndicator />;
-    }
 
-    let items = this.props.data.currencies.data.map(item => {
+    let currencies = marketCapFormat(
+      this.props.data.currencies.data,
+      this.props.data.bitcoin,
+      'USD'
+    );
+
+    let items = currencies.map(item => {
       return (
         <CurrencyListItem
           key={item.id}
@@ -46,10 +32,3 @@ export class CurrencyListComponent extends React.Component {
     return <View>{items}</View>;
   }
 }
-
-export const CurrencyList = Query(
-  CurrencyListComponent,
-  CURRENCY_QUERY,
-  () => {},
-  'https://alpha.blocktap.io/graphql'
-);

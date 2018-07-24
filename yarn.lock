@@ -5959,9 +5959,9 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
-regraph-request@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/regraph-request/-/regraph-request-0.0.1.tgz#992df13bc7f28cf1340ef2eb2b77a856bc97081f"
+regraph-request@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/regraph-request/-/regraph-request-0.0.2.tgz#aaa4a6debfcccc18cdf0419b4056fbf2c5bf28eb"
   dependencies:
     react "^16.4.1"
 
