@@ -7,6 +7,7 @@ import { marketCapFormat } from './market-cap-formatter';
 export class CurrencyList extends React.Component {
   static propTypes = {
     navigation: PropTypes.object.isRequired,
+    quoteSymbol: PropTypes.string.isRequired,
   };
 
   render() {
@@ -15,20 +16,18 @@ export class CurrencyList extends React.Component {
     let currencies = marketCapFormat(
       this.props.data.currencies.data,
       this.props.data.bitcoin,
-      'USD'
+      this.props.quoteSymbol
     );
 
-    let items = currencies.map(item => {
-      return (
-        <CurrencyListItem
-          key={item.id}
-          currency={item}
-          onPress={() => {
-            navigate('Detail', { currencySymbol: item.currencySymbol });
-          }}
-        />
-      );
-    });
+    let items = currencies.map(item => (
+      <CurrencyListItem
+        key={item.id}
+        currency={item}
+        onPress={() => {
+          navigate('Detail', { currencySymbol: item.symbol });
+        }}
+      />
+    ));
     return <View>{items}</View>;
   }
 }

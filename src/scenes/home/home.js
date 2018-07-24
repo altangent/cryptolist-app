@@ -70,6 +70,7 @@ export class HomeComponent extends React.Component {
 
   state = {
     refreshing: false,
+    quoteSymbol: 'BTC',
   };
 
   render() {
@@ -86,9 +87,13 @@ export class HomeComponent extends React.Component {
         >
           <View style={styles.logoContainer}>
             <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
-            {/* <QuotePicker /> */}
+            <QuotePicker
+              style={styles.quotePicker}
+              onSelect={quoteSymbol => this.setState({ quoteSymbol })}
+              quoteSymbol={this.state.quoteSymbol}
+            />
           </View>
-          <CurrencyList {...this.props} />
+          <CurrencyList {...this.props} quoteSymbol={this.state.quoteSymbol} />
         </ScrollView>
       </Container>
     );
@@ -99,6 +104,13 @@ const styles = StyleSheet.create({
   logoContainer: {
     paddingLeft: 10,
     paddingTop: 10,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  quotePicker: {
+    paddingTop: 10,
+    paddingRight: 20,
   },
   logo: {
     width: Dimensions.get('window').width / 2,
