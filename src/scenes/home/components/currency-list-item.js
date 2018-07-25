@@ -24,7 +24,7 @@ export class CurrencyListItem extends React.Component {
               <CLText style={styles.title}>{currency.name}</CLText>
             </View>
             <View style={styles.containerItem}>
-              <CLText>{currency.price}</CLText>
+              <CLText style={styles.price}>{currency.price}</CLText>
               <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
                 {currency.percentChange}
               </CLText>
@@ -63,13 +63,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 3,
   },
-  title: { fontSize: 17 },
+  title: { fontSize: 13 },
   subtitle: { fontSize: 10 },
   containerItem: { width: Dimensions.get('window').width / 3 },
+  price: {
+    paddingTop: 3,
+    fontSize: 10,
+  },
   positiveChange: {
+    fontSize: 10,
     color: 'green',
   },
   negativeChange: {
+    fontSize: 10,
     color: 'red',
   },
 });

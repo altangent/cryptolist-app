@@ -15,10 +15,15 @@ import { CurrencyList } from './components/currency-list';
 import { Query } from 'regraph-request';
 import { QuotePicker } from './components/quote-picker';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { SearchModal } from './components/search-modal';
 
 const CURRENCY_QUERY = `
-query AllCurrencies {
-  currencies(page: {skip: 0, limit: 20}, sort: {marketCapRank: ASC}) {
+query AllCurrencies ($filter:CurrencyFilter) {
+  currencies(
+    page: { skip: 0, limit: 20 },
+    sort: { marketCapRank: ASC },
+    filter: $filter
+  ) {
     data {
       id
       currencyName
@@ -89,13 +94,12 @@ export class HomeComponent extends React.Component {
         >
           <View style={styles.logoContainer}>
             <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
-            <TouchableOpacity
-              onPress={() => {
-                console.log('Search');
+            <SearchModal
+              onUpdate={value => {
+                console.log(value);
+                this.props.getData(value);
               }}
-            >
-              <FontAwesome name="search" size={30} style={{ paddingTop: 10 }} />
-            </TouchableOpacity>
+            />
             <QuotePicker
               style={styles.quotePicker}
               onSelect={quoteSymbol => this.setState({ quoteSymbol })}
@@ -131,6 +135,8 @@ const styles = StyleSheet.create({
 export const Home = Query(
   HomeComponent,
   CURRENCY_QUERY,
-  () => {},
+  () => ({
+    filter: null,
+  }),
   'https://alpha.blocktap.io/graphql'
 );
