@@ -71,7 +71,6 @@ export class SearchModal extends React.Component {
                 value={this.state.searchText}
                 style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
                 onChangeText={searchText => {
-                  console.log(searchText);
                   this.setState({ searchText });
                 }}
               />

@@ -14,7 +14,6 @@ import { Container } from '../../components/container';
 import { CurrencyList } from './components/currency-list';
 import { Query } from 'regraph-request';
 import { QuotePicker } from './components/quote-picker';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { SearchModal } from './components/search-modal';
 
 const CURRENCY_QUERY = `
@@ -96,7 +95,6 @@ export class HomeComponent extends React.Component {
             <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
             <SearchModal
               onUpdate={value => {
-                console.log(value);
                 this.props.getData(value);
               }}
             />
