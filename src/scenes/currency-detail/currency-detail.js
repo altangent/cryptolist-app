@@ -16,6 +16,15 @@ query Currency($currencySymbol: String!) {
     currencySymbol
     marketCap
     marketCapRank
+    markets(aggregation: VWAP) {
+      data {
+        marketSymbol
+        ticker {
+          last
+          percentChange
+        }
+      }
+    }
   }
 }
 `;
@@ -27,8 +36,26 @@ export class CurrencyDetailComponent extends React.Component {
 
   render() {
     const { navigate } = this.props.navigation;
-    if (!this.props.data.currency) {
+    let { currency } = this.props.data;
+    if (!currency) {
       return <ActivityIndicator />;
+    }
+
+    let markets = currency.markets.data;
+    let market = markets.find(market => {
+      return market.marketSymbol.endsWith(
+        this.props.navigation.state.params.quoteSymbol.toUpperCase()
+      );
+    });
+    let price, change, isPositive;
+    if (!market) {
+      price = 0;
+      change = 0;
+      isPositive = true;
+    } else {
+      price = market.ticker.last;
+      change = market.ticker.percentChange;
+      isPositive = change >= 0;
     }
 
     return (
@@ -42,11 +69,15 @@ export class CurrencyDetailComponent extends React.Component {
           </View>
           <View style={[style.priceContainer]}>
             <View>
-              <CLText>$6800.25</CLText>
+              <CLText>{price}</CLText>
             </View>
             <View style={[style.priceChange]}>
-              <FontAwesome name="caret-up" size={20} style={[{ paddingTop: 10 }, style.positive]} />
-              <CLText style={style.positive}>0.2%</CLText>
+              <FontAwesome
+                name={isPositive ? 'caret-up' : 'caret-down'}
+                size={20}
+                style={[{ paddingTop: 10 }, isPositive ? style.positive : style.negative]}
+              />
+              <CLText style={isPositive ? style.positive : style.negative}>{change}%</CLText>
             </View>
           </View>
         </View>
