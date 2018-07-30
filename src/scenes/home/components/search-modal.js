@@ -1,35 +1,23 @@
 import React from 'react';
-import {
-  Picker,
-  View,
-  Modal,
-  TouchableOpacity,
-  Text,
-  Button,
-  StyleSheet,
-  Dimensions,
-  TextInput,
-} from 'react-native';
+import { View, TouchableOpacity, TextInput, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { Container } from '../../../components/container';
+import { SearchBar, Icon } from 'react-native-elements';
 
 export class SearchModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      modalVisible: false,
-      searchText: '',
-    };
-    this.setModalVisible = this.setModalVisible.bind(this);
+    this.changeText = this.changeText.bind(this);
+    this.submit = this.submit.bind(this);
   }
+  state = {
+    searchText: '',
+  };
 
   static propTypes = {
     onUpdate: PropTypes.func,
   };
 
-  changeSearch() {
-    this.setModalVisible(false);
+  submit() {
     this.props.onUpdate(
       this.state.searchText
         ? {
@@ -44,56 +32,36 @@ export class SearchModal extends React.Component {
     );
   }
 
-  setModalVisible(visible) {
-    this.setState({ modalVisible: visible });
+  componentDidMount() {
+    this.search.focus();
+  }
+
+  changeText(searchText) {
+    this.setState({ searchText });
   }
 
   render() {
     return (
       <View style={this.props.style}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={this.state.modalVisible}
-          onRequestClose={() => {
-            this.setModalVisible(false);
-          }}
-        >
-          <Container style={styles.modal}>
-            <Button
-              onPress={() => {
-                this.changeSearch();
-              }}
-              title="Done"
-            />
-            <View style={styles.footer}>
-              <TextInput
-                value={this.state.searchText}
-                style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                onChangeText={searchText => {
-                  this.setState({ searchText });
-                }}
-              />
-            </View>
-          </Container>
-        </Modal>
-
-        <TouchableOpacity
-          onPress={() => {
-            this.setModalVisible(true);
-          }}
-        >
-          <FontAwesome name="search" size={30} style={{ paddingTop: 10 }} />
-        </TouchableOpacity>
+        <View>
+          <SearchBar
+            ref={search => (this.search = search)}
+            lightTheme
+            onChangeText={text => this.changeText(text)}
+            blurOnSubmit={true}
+            onSubmitEditing={() => this.submit()}
+            cancelButtonTitle="Cancel"
+            onCancel={() => console.log('123')}
+            placeholder="Search"
+            autoCorrect={false}
+            autoCapitalize="none"
+            clearIcon={null}
+            platform="ios"
+          />
+        </View>
       </View>
     );
   }
 }
 
-let dimensions = Dimensions.get('window');
-const styles = StyleSheet.create({
-  modal: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-});
+let style = StyleSheet.create({});

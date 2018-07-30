@@ -10,11 +10,11 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import PropTypes from 'prop-types';
-import { Container } from '../../components/container';
 import { CurrencyList } from './components/currency-list';
 import { Query } from 'regraph-request';
 import { QuotePicker } from './components/quote-picker';
 import { SearchModal } from './components/search-modal';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 const CURRENCY_QUERY = `
 query AllCurrencies ($filter:CurrencyFilter) {
@@ -60,7 +60,21 @@ export class HomeComponent extends React.Component {
     super(props);
 
     this.refresh = this.refresh.bind(this);
+    this.search = this.search.bind(this);
+    this.state = {
+      refreshing: false,
+      searchVisibile: false,
+      quoteSymbol: 'BTC',
+    };
   }
+
+  componentDidMount() {
+    this.props.navigation.setParams({ toggleSearchVisibility: this.toggleSearchVisibility });
+  }
+
+  toggleSearchVisibility = () => {
+    this.setState({ searchVisibile: !this.state.searchVisibile });
+  };
 
   refresh() {
     this.setState({ refreshing: true });
@@ -68,59 +82,41 @@ export class HomeComponent extends React.Component {
       this.setState({ refreshing: false });
     });
   }
-  static navigationOptions = {
-    title: 'Home',
-  };
+
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
   };
 
-  state = {
-    refreshing: false,
-    quoteSymbol: 'BTC',
-  };
+  search(query) {
+    if (query === null) {
+      query = { filter: null };
+    }
+    this.props.getData(query);
+  }
 
   render() {
     if (!this.props.data.currencies) {
       return <ActivityIndicator />;
     }
-    const { navigate } = this.props.navigation;
+
+    let searchBar = this.state.searchVisibile ? <SearchModal onUpdate={this.search} /> : null;
     return (
-      <Container>
+      <View style={styles.containerView}>
         <ScrollView
           refreshControl={
             <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />
           }
         >
-          <View style={styles.logoContainer}>
-            <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />
-            <SearchModal
-              onUpdate={value => {
-                this.props.getData(value);
-              }}
-            />
-            <QuotePicker
-              style={styles.quotePicker}
-              onSelect={quoteSymbol => this.setState({ quoteSymbol })}
-              quoteSymbol={this.state.quoteSymbol}
-            />
-          </View>
+          {searchBar}
           <CurrencyList {...this.props} quoteSymbol={this.state.quoteSymbol} />
         </ScrollView>
-      </Container>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  logoContainer: {
-    paddingLeft: 10,
-    paddingTop: 10,
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
   quotePicker: {
     paddingTop: 10,
     paddingRight: 20,
@@ -129,6 +125,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width / 2,
     height: 50,
     resizeMode: Image.resizeMode.contain,
+  },
+  border: {
+    borderColor: 'red',
+    borderWidth: 1,
   },
 });
 
@@ -141,6 +141,16 @@ export const Home = Query(
   'https://alpha.blocktap.io/graphql'
 );
 
-Home.navigationOptions = {
-  header: null,
-};
+Home.navigationOptions = ({ navigation }) => ({
+  headerTitle: <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />,
+  headerRight: (
+    <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+      <FontAwesome name="bars" size={20} style={{ paddingRight: 15 }} />
+    </TouchableOpacity>
+  ),
+  headerLeft: (
+    <TouchableOpacity onPress={navigation.getParam('toggleSearchVisibility')}>
+      <FontAwesome name="search" size={20} style={{ paddingLeft: 15 }} />
+    </TouchableOpacity>
+  ),
+});
