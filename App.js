@@ -9,9 +9,6 @@ const App = createStackNavigator(
   },
   {
     initialRouteName: 'Home',
-    navigationOptions: {
-      header: null,
-    },
   }
 );
 

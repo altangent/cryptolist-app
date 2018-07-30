@@ -10,5 +10,6 @@ export class CLText extends React.Component {
 const style = StyleSheet.create({
   text: {
     fontFamily: 'Menlo-Regular',
+    color: '#4a4a4a',
   },
 });

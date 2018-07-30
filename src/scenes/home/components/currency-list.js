@@ -25,7 +25,11 @@ export class CurrencyList extends React.Component {
         currency={item}
         quoteSymbol={this.props.quoteSymbol}
         onPress={() => {
-          navigate('Detail', { currencySymbol: item.symbol, quoteSymbol: this.props.quoteSymbol });
+          navigate('Detail', {
+            currencySymbol: item.symbol,
+            quoteSymbol: this.props.quoteSymbol,
+            currencyName: item.name,
+          });
         }}
       />
     ));

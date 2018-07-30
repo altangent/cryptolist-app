@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { LineChart, YAxis, Grid } from 'react-native-svg-charts';
+import { Defs, LinearGradient, Stop } from 'react-native-svg';
 import * as shape from 'd3-shape';
 import PropTypes from 'prop-types';
 import { Query } from 'regraph-request';
@@ -35,6 +36,15 @@ export class ChartComponent extends React.PureComponent {
   };
 
   render() {
+    const Gradient = () => (
+      <Defs key={'gradient'}>
+        <LinearGradient id={'gradient'} x1={'0'} x2={'0'} y1={'0'} y2={'100%'}>
+          <Stop offset={'0%'} stopColor={'#23c5d5'} />
+          <Stop offset={'100%'} stopColor={'#23d59b'} />
+        </LinearGradient>
+      </Defs>
+    );
+
     let currency = this.props.data.currency;
 
     if (!currency) {
@@ -64,15 +74,19 @@ export class ChartComponent extends React.PureComponent {
             fill: 'grey',
             fontSize: 10,
           }}
-          numberOfTicks={10}
+          numberOfTicks={5}
         />
         <LineChart
           style={{ flex: 1, marginLeft: 16 }}
           data={data}
-          svg={{ stroke: 'rgb(134, 65, 244)' }}
+          curve={shape.curveNatural}
+          svg={{
+            stroke: 'url(#gradient)',
+          }}
           contentInset={contentInset}
         >
           <Grid />
+          <Gradient />
         </LineChart>
       </View>
     );

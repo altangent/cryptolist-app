@@ -1,11 +1,16 @@
 import React from 'react';
 import { Query } from 'regraph-request';
-import { View, StyleSheet, PixelRatio, ActivityIndicator } from 'react-native';
+import { Text, View, StyleSheet, PixelRatio, ActivityIndicator, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { ScrollContainer } from '../../components/container';
 import { CLText } from '../../components/cl-text';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Chart } from './components/chart';
+import { CurrencyInformationItem } from './components/currency-information-item';
+import { MarketInfo } from './components/market-info';
+import CryptoIcon from 'react-native-crypto-icons';
+import { CLButton } from '../../components/button';
+
 const CURRENCY_QUERY = `
 query Currency($currencySymbol: String!) {
   currency(currencySymbol: $currencySymbol) {
@@ -44,7 +49,7 @@ export class CurrencyDetailComponent extends React.Component {
     let markets = currency.markets.data;
     let market = markets.find(market => {
       return market.marketSymbol.endsWith(
-        this.props.navigation.state.params.quoteSymbol.toUpperCase()
+        this.props.navigation.getParam('quoteSymbol').toUpperCase()
       );
     });
     let price, change, isPositive;
@@ -59,33 +64,56 @@ export class CurrencyDetailComponent extends React.Component {
     }
 
     return (
-      <ScrollContainer style={style.container}>
-        <View style={style.header}>
-          <View style={[style.currencyNameContainer]}>
-            <CLText style={style.currencyName}>{this.props.data.currency.currencyName}</CLText>
-            <CLText style={style.currencySymbol}>
-              ({this.props.data.currency.currencySymbol})
-            </CLText>
-          </View>
+      <ScrollContainer style={[style.container]}>
+        <View style={[style.header]}>
+          <CLButton>
+            <Text style={{ color: 'white', marginRight: 5 }}>5M</Text>
+            <FontAwesome name="caret-down" style={{ color: 'white' }} />
+          </CLButton>
           <View style={[style.priceContainer]}>
             <View>
-              <CLText>{price}</CLText>
+              <CLText style={style.price}>{price}</CLText>
             </View>
-            <View style={[style.priceChange]}>
+            <View style={[style.priceChangeContainer]}>
               <FontAwesome
                 name={isPositive ? 'caret-up' : 'caret-down'}
-                size={20}
-                style={[{ paddingTop: 10 }, isPositive ? style.positive : style.negative]}
+                size={10}
+                style={[isPositive ? style.positive : style.negative]}
               />
-              <CLText style={isPositive ? style.positive : style.negative}>{change}%</CLText>
+              <CLText style={[isPositive ? style.positive : style.negative, style.priceChange]}>
+                {change.toString().substring(1)}%
+              </CLText>
             </View>
           </View>
         </View>
         <View>
           <Chart
             currencySymbol={this.props.data.currency.currencySymbol}
-            quoteSymbol={this.props.navigation.state.params.quoteSymbol}
+            quoteSymbol={this.props.navigation.getParam('quoteSymbol')}
           />
+        </View>
+        <View
+          style={{
+            width: Dimensions.get('screen').width,
+            flex: 1,
+            flexDirection: 'row',
+            marginTop: 20,
+          }}
+        >
+          <CurrencyInformationItem name="Market Cap" value="$140,974,291,969" />
+          <CurrencyInformationItem name="Current Supply" value="17,173,150" />
+          <CurrencyInformationItem name="Total Supply" value="21,000,000" />
+        </View>
+        <View
+          style={{
+            width: Dimensions.get('screen').width,
+            flex: 1,
+            flexDirection: 'row',
+            marginTop: 20,
+          }}
+        >
+          <MarketInfo name="Volume / Exchange" />
+          <MarketInfo name="Volume / Quote" />
         </View>
       </ScrollContainer>
     );
@@ -96,34 +124,64 @@ export const CurrencyDetail = Query(
   CurrencyDetailComponent,
   CURRENCY_QUERY,
   props => ({
-    currencySymbol: props.navigation.state.params.currencySymbol,
+    currencySymbol: props.navigation.getParam('currencySymbol'),
   }),
   'https://alpha.blocktap.io/graphql'
 );
 
+const TitleBar = ({ name, symbol }) => {
+  return (
+    <View style={style.title}>
+      <CryptoIcon name={symbol.toLowerCase()} style={style.titleIcon} />
+      <CLText style={style.titleText}>{name}</CLText>
+    </View>
+  );
+};
+
+CurrencyDetail.navigationOptions = ({ navigation }) => ({
+  headerTitle: (
+    <TitleBar
+      symbol={navigation.getParam('currencySymbol')}
+      name={navigation.getParam('currencyName')}
+    />
+  ),
+});
+
 const style = StyleSheet.create({
+  title: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  titleIcon: {
+    fontSize: 20,
+    color: '#4a4a4a',
+    marginRight: 10,
+  },
+  titleText: {
+    fontWeight: '400',
+    fontSize: 20,
+  },
   container: {
-    paddingLeft: 10,
+    marginLeft: 10,
+    width: Dimensions.get('screen').width - 20,
+    paddingTop: 10,
   },
   header: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
   },
-  currencyNameContainer: { flex: 3, flexDirection: 'row', alignItems: 'baseline' },
   priceContainer: {
-    flex: 2,
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    marginLeft: 'auto',
   },
-  priceChange: { flexDirection: 'row', alignItems: 'baseline' },
+  price: {
+    fontSize: 14,
+  },
+  priceChangeContainer: { flexDirection: 'row', alignItems: 'baseline' },
+  priceChange: { fontSize: 10 },
   positive: { color: 'green' },
   negative: { color: 'red' },
-  currencyName: {
-    fontSize: 20,
-  },
   currencySymbol: {
     color: 'grey',
     fontSize: 10,

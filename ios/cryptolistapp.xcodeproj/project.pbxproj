@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -43,6 +42,7 @@
 		F5DB8A982107CEEB000B8F2E /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F5DB8A952107CED6000B8F2E /* libRNSVG.a */; };
 		F5DB8AA92107D27F000B8F2E /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F5DB8A9E2107D27E000B8F2E /* FontAwesome.ttf */; };
 		F5DB8AAE2107D27F000B8F2E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F5DB8AA32107D27F000B8F2E /* Foundation.ttf */; };
+		09CB93D03A7E4C80BD738B33 /* CryptoIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97B2E6A447714AD2B2383F49 /* CryptoIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -382,6 +382,7 @@
 		F5DB8A8F2107CED6000B8F2E /* RNSVG.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSVG.xcodeproj; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; };
 		F5DB8A9E2107D27E000B8F2E /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		F5DB8AA32107D27F000B8F2E /* Foundation.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
+		97B2E6A447714AD2B2383F49 /* CryptoIcons.ttf */ = {isa = PBXFileReference; name = "CryptoIcons.ttf"; path = "../node_modules/react-native-crypto-icons/fonts/CryptoIcons.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -624,6 +625,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				F5DB8A612107CCA6000B8F2E /* Recovered References */,
+				A6ED6BD14FC94DEABE35E421 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -685,6 +687,15 @@
 			);
 			name = Fonts;
 			sourceTree = "<group>";
+		};
+		A6ED6BD14FC94DEABE35E421 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				97B2E6A447714AD2B2383F49 /* CryptoIcons.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -1176,6 +1187,7 @@
 				F5DB8AA92107D27F000B8F2E /* FontAwesome.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				F5DB8AAE2107D27F000B8F2E /* Foundation.ttf in Resources */,
+				09CB93D03A7E4C80BD738B33 /* CryptoIcons.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

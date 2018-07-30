@@ -68,7 +68,9 @@ export class HomeComponent extends React.Component {
       this.setState({ refreshing: false });
     });
   }
-
+  static navigationOptions = {
+    title: 'Home',
+  };
   static propTypes = {
     navigation: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
@@ -138,3 +140,7 @@ export const Home = Query(
   }),
   'https://alpha.blocktap.io/graphql'
 );
+
+Home.navigationOptions = {
+  header: null,
+};

@@ -37,9 +37,6 @@ const style = StyleSheet.create({
   scrollView: {
     flex: 1,
     backgroundColor: '#f6f6f6',
-    paddingTop: 30,
-  },
-  scrollViewiPhoneX: {
-    paddingTop: 40,
+    paddingTop: 10,
   },
 });
