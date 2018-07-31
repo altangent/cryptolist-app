@@ -61,12 +61,18 @@ export class HomeComponent extends React.Component {
 
     this.refresh = this.refresh.bind(this);
     this.search = this.search.bind(this);
+
     this.state = {
       refreshing: false,
       searchVisibile: false,
       quoteSymbol: 'BTC',
     };
   }
+
+  static propTypes = {
+    navigation: PropTypes.object.isRequired,
+    getData: PropTypes.func.isRequired,
+  };
 
   componentDidMount() {
     this.props.navigation.setParams({ toggleSearchVisibility: this.toggleSearchVisibility });
@@ -82,11 +88,6 @@ export class HomeComponent extends React.Component {
       this.setState({ refreshing: false });
     });
   }
-
-  static propTypes = {
-    navigation: PropTypes.object.isRequired,
-    getData: PropTypes.func.isRequired,
-  };
 
   search(query) {
     if (query === null) {

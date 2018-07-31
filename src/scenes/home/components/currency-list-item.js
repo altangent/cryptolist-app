@@ -1,14 +1,49 @@
 import React from 'react';
-import { View, TouchableWithoutFeedback, StyleSheet, Dimensions } from 'react-native';
+import { View, TouchableWithoutFeedback, StyleSheet } from 'react-native';
 import { CLText } from '../../../components/cl-text';
 import PropTypes from 'prop-types';
 import { MiniGraph } from './mini-graph';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import * as FavoriteUtils from '../../../library/currency-favorite';
 
 export class CurrencyListItem extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.addFavorite = this.addFavorite.bind(this);
+    this.removeFavorite = this.removeFavorite.bind(this);
+    this.updateFavorite = this.updateFavorite.bind(this);
+    this.state = {
+      isFavorite: false,
+    };
+  }
+
+  componentDidMount() {
+    this.updateFavorite();
+  }
+
+  updateFavorite() {
+    FavoriteUtils.isFavorite(this.props.currency.symbol).then(isFavorite => {
+      this.setState({ isFavorite });
+    });
+  }
+
+  addFavorite() {
+    FavoriteUtils.addFavorite(this.props.currency.symbol).then(() => {
+      this.updateFavorite();
+    });
+  }
+
+  removeFavorite() {
+    FavoriteUtils.removeFavorite(this.props.currency.symbol).then(() => {
+      this.updateFavorite();
+    });
+  }
+
   static propTypes = {
     onPress: PropTypes.func,
     currency: PropTypes.object,
-    quoteSymbol: PropTypes.string,
+    quoteSymbol: PropTypes.string.isRequired,
   };
 
   render() {
@@ -19,6 +54,23 @@ export class CurrencyListItem extends React.Component {
       <TouchableWithoutFeedback onPress={() => this.props.onPress(currency.currencySymbol)}>
         <View style={styles.outerContainer}>
           <View style={styles.innerContainer}>
+            <View style={styles.containerItemSm}>
+              {this.state.isFavorite ? (
+                <FontAwesome
+                  name="star"
+                  onPress={this.removeFavorite}
+                  style={{ color: '#F8E71C' }}
+                  size={20}
+                />
+              ) : (
+                <FontAwesome
+                  name="star"
+                  onPress={this.addFavorite}
+                  style={{ color: '#4a4a4a' }}
+                  size={20}
+                />
+              )}
+            </View>
             <View style={styles.containerItem}>
               <CLText style={styles.subtitle}>{currency.symbol}</CLText>
               <CLText style={styles.title}>{currency.name}</CLText>
@@ -65,7 +117,8 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 13 },
   subtitle: { fontSize: 10 },
-  containerItem: { width: Dimensions.get('window').width / 3 },
+  containerItem: { flex: 2 },
+  containerItemSm: { flex: 1 },
   price: {
     paddingTop: 3,
     fontSize: 10,
