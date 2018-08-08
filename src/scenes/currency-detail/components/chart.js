@@ -93,9 +93,6 @@ export class ChartComponent extends React.PureComponent {
   }
 }
 
-export const Chart = Query(
-  ChartComponent,
-  MARKET_QUERY,
-  props => ({ currencySymbol: props.currencySymbol }),
-  'https://alpha.blocktap.io/graphql'
-);
+export const Chart = Query(ChartComponent, MARKET_QUERY, props => ({
+  currencySymbol: props.currencySymbol,
+}));

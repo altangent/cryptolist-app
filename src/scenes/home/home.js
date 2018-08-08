@@ -12,16 +12,50 @@ import {
 import PropTypes from 'prop-types';
 import { CurrencyList } from './components/currency-list';
 import { Query } from 'regraph-request';
-import { QuotePicker } from './components/quote-picker';
 import { SearchModal } from './components/search-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { getFavorites } from '../../library/currency-favorite';
 
 const CURRENCY_QUERY = `
-query AllCurrencies ($filter:CurrencyFilter) {
+query AllCurrencies ($filter:CurrencyFilter, $favorites:[String]) {
+  favorites: currencies(
+    page: { skip: 0, limit: 20 },
+    sort: { marketCapRank: ASC },
+    filter: {
+      _and: [
+        { currencySymbol_in: $favorites },
+        $filter
+      ]
+    }
+  ) {
+    data {
+      id
+      currencyName
+      currentSupply
+      currencySymbol
+      markets(aggregation: VWAP) {
+        data {
+          id
+          marketSymbol
+          ticker {
+            last
+            percentChange
+            baseVolume
+            quoteVolume
+          }
+        }
+      }
+    }
+  }
   currencies(
     page: { skip: 0, limit: 20 },
     sort: { marketCapRank: ASC },
-    filter: $filter
+    filter: {
+      _and: [
+        { currencySymbol_nin: $favorites },
+        $filter
+      ]
+    }
   ) {
     data {
       id
@@ -133,13 +167,13 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Home = Query(
-  HomeComponent,
-  CURRENCY_QUERY,
-  () => ({
-    filter: null,
-  }),
-  'https://alpha.blocktap.io/graphql'
+export const Home = getFavorites().then(favs =>
+  Query(HomeComponent, CURRENCY_QUERY, () => ({
+    favorites: favs,
+    filter: {
+      _or: [{ currencySymbol_like: '%' }, { currencyName_like: '%' }],
+    },
+  }))
 );
 
 Home.navigationOptions = ({ navigation }) => ({

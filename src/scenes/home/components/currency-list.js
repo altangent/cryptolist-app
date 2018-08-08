@@ -12,7 +12,6 @@ export class CurrencyList extends React.Component {
 
   render() {
     const { navigate } = this.props.navigation;
-
     let currencies = marketCapFormat(
       this.props.data.currencies.data,
       this.props.data.bitcoin,

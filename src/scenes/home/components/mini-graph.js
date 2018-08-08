@@ -101,20 +101,15 @@ MiniGraphComponent.propTypes = {
   isPositive: PropTypes.bool,
 };
 
-export const MiniGraph = Query(
-  MiniGraphComponent,
-  CURRENCY_QUERY,
-  props => ({
-    symbol: props.currencyId,
-    quoteSymbol: props.quote,
-    start: moment()
-      .subtract(numberOfDays, 'day')
-      .utc()
-      .unix(),
-    end: moment()
-      .utc()
-      .unix(),
-    resolution: '_1h',
-  }),
-  'https://alpha.blocktap.io/graphql'
-);
+export const MiniGraph = Query(MiniGraphComponent, CURRENCY_QUERY, props => ({
+  symbol: props.currencyId,
+  quoteSymbol: props.quote,
+  start: moment()
+    .subtract(numberOfDays, 'day')
+    .utc()
+    .unix(),
+  end: moment()
+    .utc()
+    .unix(),
+  resolution: '_1h',
+}));

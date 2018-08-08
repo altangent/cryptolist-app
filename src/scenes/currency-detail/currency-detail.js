@@ -120,14 +120,9 @@ export class CurrencyDetailComponent extends React.Component {
   }
 }
 
-export const CurrencyDetail = Query(
-  CurrencyDetailComponent,
-  CURRENCY_QUERY,
-  props => ({
-    currencySymbol: props.navigation.getParam('currencySymbol'),
-  }),
-  'https://alpha.blocktap.io/graphql'
-);
+export const CurrencyDetail = Query(CurrencyDetailComponent, CURRENCY_QUERY, props => ({
+  currencySymbol: props.navigation.getParam('currencySymbol'),
+}));
 
 const TitleBar = ({ name, symbol }) => {
   return (

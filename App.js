@@ -2,8 +2,10 @@ import { createStackNavigator } from 'react-navigation';
 import { Home } from './src/scenes/home/home';
 import { CurrencyDetail } from './src/scenes/currency-detail/currency-detail';
 import { Settings } from './src/scenes/settings/settings';
+import { RegraphRequest } from 'regraph-request';
+import React from 'react';
 
-const App = createStackNavigator(
+const Navigator = createStackNavigator(
   {
     Home: Home,
     Detail: CurrencyDetail,
@@ -14,4 +16,8 @@ const App = createStackNavigator(
   }
 );
 
-export default App;
+export default () => (
+  <RegraphRequest value="https://alpha.blocktap.io/graphql">
+    <Navigator />
+  </RegraphRequest>
+);

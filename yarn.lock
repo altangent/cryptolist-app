@@ -4698,15 +4698,6 @@ react@16.3.1:
     object-assign "^4.1.1"
     prop-types "^15.6.0"
 
-react@^16.4.1:
-  version "16.4.1"
-  resolved "https://registry.yarnpkg.com/react/-/react-16.4.1.tgz#de51ba5764b5dbcd1f9079037b862bd26b82fe32"
-  dependencies:
-    fbjs "^0.8.16"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.1"
-    prop-types "^15.6.0"
-
 read-pkg-up@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/read-pkg-up/-/read-pkg-up-1.0.1.tgz#9d63c13276c065918d57f002a57f40a1b643fb02"
@@ -4812,11 +4803,9 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
-regraph-request@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/regraph-request/-/regraph-request-0.0.2.tgz#aaa4a6debfcccc18cdf0419b4056fbf2c5bf28eb"
-  dependencies:
-    react "^16.4.1"
+regraph-request@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/regraph-request/-/regraph-request-0.0.5.tgz#4c0e78d27de56da126b5aa805f0762254801ea51"
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
