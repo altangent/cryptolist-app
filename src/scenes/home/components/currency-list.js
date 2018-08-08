@@ -17,7 +17,26 @@ export class CurrencyList extends React.Component {
       this.props.data.bitcoin,
       this.props.quoteSymbol
     );
+    let favorites = marketCapFormat(
+      this.props.data.favorites.data,
+      this.props.data.bitcoin,
+      this.props.quoteSymbol
+    );
 
+    let favoriteItems = favorites.map(item => (
+      <CurrencyListItem
+        key={item.id}
+        currency={item}
+        quoteSymbol={this.props.quoteSymbol}
+        onPress={() => {
+          navigate('Detail', {
+            currencySymbol: item.symbol,
+            quoteSymbol: this.props.quoteSymbol,
+            currencyName: item.name,
+          });
+        }}
+      />
+    ));
     let items = currencies.map(item => (
       <CurrencyListItem
         key={item.id}
@@ -32,6 +51,11 @@ export class CurrencyList extends React.Component {
         }}
       />
     ));
-    return <View>{items}</View>;
+    return (
+      <View>
+        <View>{favoriteItems}</View>
+        <View>{items}</View>
+      </View>
+    );
   }
 }

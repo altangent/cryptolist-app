@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { CurrencyList } from './components/currency-list';
-import { Query } from 'regraph-request';
+import { QueryComponent } from 'regraph-request';
 import { SearchModal } from './components/search-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getFavorites } from '../../library/currency-favorite';
@@ -167,14 +167,35 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Home = getFavorites().then(favs =>
-  Query(HomeComponent, CURRENCY_QUERY, () => ({
-    favorites: favs,
-    filter: {
-      _or: [{ currencySymbol_like: '%' }, { currencyName_like: '%' }],
-    },
-  }))
-);
+export class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    getFavorites().then(favorites => {
+      this.setState({ favoritesLoaded: true, favorites });
+    });
+    this.state = {
+      favorites: [],
+      favoritesLoaded: false,
+    };
+  }
+  render() {
+    return (
+      this.state.favoritesLoaded && (
+        <QueryComponent
+          component={HomeComponent}
+          query={CURRENCY_QUERY}
+          variables={() => ({
+            favorites: this.state.favorites.length ? this.state.favorites : ['FAKEFAKE'],
+            filter: {
+              _or: [{ currencySymbol_like: '%' }, { currencyName_like: '%' }],
+            },
+          })}
+          {...this.props}
+        />
+      )
+    );
+  }
+}
 
 Home.navigationOptions = ({ navigation }) => ({
   headerTitle: <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />,
