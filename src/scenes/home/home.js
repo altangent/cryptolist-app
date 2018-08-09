@@ -11,20 +11,26 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { CurrencyList } from './components/currency-list';
-import { Query } from 'regraph-request';
+import { QueryComponent } from 'regraph-request';
 import { SearchModal } from './components/search-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getFavorites } from '../../library/currency-favorite';
 
+const DEFAULT_FILTER = '%';
 const CURRENCY_QUERY = `
-query AllCurrencies ($filter:CurrencyFilter, $favorites:[String]) {
+query AllCurrencies ($filter:String, $favorites:[String]) {
   favorites: currencies(
     page: { skip: 0, limit: 20 },
     sort: { marketCapRank: ASC },
     filter: {
       _and: [
         { currencySymbol_in: $favorites },
-        $filter
+        {
+          _or: [
+            { currencySymbol_like: $filter },
+            { currencyName_like: $filter }
+          ]
+        }
       ]
     }
   ) {
@@ -53,7 +59,12 @@ query AllCurrencies ($filter:CurrencyFilter, $favorites:[String]) {
     filter: {
       _and: [
         { currencySymbol_nin: $favorites },
-        $filter
+        {
+          _or: [
+            { currencySymbol_like: $filter },
+            { currencyName_like: $filter }
+          ]
+        }
       ]
     }
   ) {
@@ -125,9 +136,9 @@ export class HomeComponent extends React.Component {
 
   search(query) {
     if (query === null) {
-      query = { filter: null };
+      query = { filter: DEFAULT_FILTER };
     }
-    this.props.getData(query);
+    this.props.getData({ filter: query });
   }
 
   render() {
@@ -167,14 +178,33 @@ const styles = StyleSheet.create({
   },
 });
 
-export const Home = getFavorites().then(favs =>
-  Query(HomeComponent, CURRENCY_QUERY, () => ({
-    favorites: favs,
-    filter: {
-      _or: [{ currencySymbol_like: '%' }, { currencyName_like: '%' }],
-    },
-  }))
-);
+export class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    getFavorites().then(favorites => {
+      this.setState({ favoritesLoaded: true, favorites });
+    });
+    this.state = {
+      favorites: [],
+      favoritesLoaded: false,
+    };
+  }
+  render() {
+    return (
+      this.state.favoritesLoaded && (
+        <QueryComponent
+          component={HomeComponent}
+          query={CURRENCY_QUERY}
+          variables={() => ({
+            favorites: this.state.favorites.length ? this.state.favorites : ['FAKEFAKE'],
+            filter: DEFAULT_FILTER,
+          })}
+          {...this.props}
+        />
+      )
+    );
+  }
+}
 
 Home.navigationOptions = ({ navigation }) => ({
   headerTitle: <Image style={styles.logo} source={require('../../../img/cryptolist.png')} />,

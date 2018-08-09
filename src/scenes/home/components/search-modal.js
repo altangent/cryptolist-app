@@ -18,12 +18,7 @@ export class SearchModal extends React.Component {
   };
 
   submit() {
-    this.props.onUpdate({
-      _or: [
-        { currencySymbol_like: `%${this.state.searchText}%` },
-        { currencyName_like: `%${this.state.searchText}%` },
-      ],
-    });
+    this.props.onUpdate(`%${this.state.searchText}%`);
   }
 
   componentDidMount() {

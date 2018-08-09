@@ -45,7 +45,6 @@ export const removeFavorite = name => {
 export const isFavorite = name => {
   return getFavorites()
     .then(items => {
-      console.log('items', items);
       return items.indexOf(name) > -1;
     })
     .catch(err => {
