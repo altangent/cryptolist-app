@@ -1,5 +1,5 @@
 import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import { CurrencyListItem } from './currency-list-item';
 import { marketCapFormat } from './market-cap-formatter';
