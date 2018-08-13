@@ -100,9 +100,18 @@ export class CurrencyDetailComponent extends React.Component {
             marginTop: 20,
           }}
         >
-          <CurrencyInformationItem name="Market Cap" value="$140,974,291,969" />
-          <CurrencyInformationItem name="Current Supply" value="17,173,150" />
-          <CurrencyInformationItem name="Total Supply" value="21,000,000" />
+          <CurrencyInformationItem
+            name="Market Cap"
+            value={this.props.data.currency.marketCap.toLocaleString()}
+          />
+          <CurrencyInformationItem
+            name="Current Supply"
+            value={this.props.data.currency.currentSupply.toLocaleString()}
+          />
+          <CurrencyInformationItem
+            name="Total Supply"
+            value={this.props.data.currency.totalSupply.toLocaleString()}
+          />
         </View>
         <View
           style={{
@@ -112,8 +121,7 @@ export class CurrencyDetailComponent extends React.Component {
             marginTop: 20,
           }}
         >
-          <MarketInfo name="Volume / Exchange" />
-          <MarketInfo name="Volume / Quote" />
+          <MarketInfo currencySymbol={this.props.navigation.getParam('currencySymbol')} />
         </View>
       </ScrollContainer>
     );
