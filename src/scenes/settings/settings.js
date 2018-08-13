@@ -2,6 +2,7 @@ import React from 'react';
 import { View, FlatList, StyleSheet, Text } from 'react-native';
 import PropTypes from 'prop-types';
 import { QuotePickerSettingsItem } from '../quote-picker/quote-picker';
+import { CLText } from '../../components/cl-text';
 
 export class Settings extends React.Component {
   constructor(props) {
@@ -32,6 +33,10 @@ export class Settings extends React.Component {
     );
   }
 }
+
+Settings.navigationOptions = ({ navigation }) => ({
+  headerTitle: <CLText>Settings</CLText>,
+});
 
 const styles = StyleSheet.create({
   container: {

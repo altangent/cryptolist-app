@@ -3,8 +3,15 @@ import { TouchableHighlight, FlatList, View, StyleSheet, Text, PixelRatio } from
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import PropTypes from 'prop-types';
 import { getQuotes, saveQuotes } from '../../library/quote-currency-persister';
+import { CLText } from '../../components/cl-text';
 
-const quotes = [{ key: 'USD' }, { key: 'USDT' }, { key: 'EUR' }, { key: 'GBP' }, { key: 'BTC' }];
+const quotes = [
+  { key: 'USD', name: 'United States dollar' },
+  { key: 'USDT', name: 'Tether' },
+  { key: 'EUR', name: 'Euro' },
+  { key: 'GBP', name: 'Pound sterling' },
+  { key: 'BTC', name: 'Bitcoin' },
+];
 
 export class QuotePicker extends React.Component {
   constructor(props) {
@@ -48,31 +55,39 @@ export class QuotePicker extends React.Component {
           extraData={this.state}
           renderItem={({ item }) => (
             <QuotePickerItem
-              name={item.key}
+              name={item.name}
+              symbol={item.key}
               isSelected={this.state.selected === item.key}
               onPress={name => this.select(name)}
             />
           )}
         />
-        <Text>{this.state.selected}</Text>
+        <CLText>{this.state.selected}</CLText>
       </View>
     );
   }
 }
 
+QuotePicker.navigationOptions = ({ navigation }) => ({
+  headerTitle: <CLText>{navigation.getParam('name')} Quote Currency</CLText>,
+});
+
 export class QuotePickerItem extends React.Component {
   static propTypes = {
     name: PropTypes.string.isRequired,
+    symbol: PropTypes.string.isRequired,
     onPress: PropTypes.func,
     selected: PropTypes.bool,
   };
 
   render() {
     return (
-      <TouchableHighlight onPress={() => this.props.onPress(this.props.name)}>
+      <TouchableHighlight onPress={() => this.props.onPress(this.props.symbol)}>
         <View style={[styles.quoteItem, styles.item]}>
           {this.props.isSelected ? <FontAwesome name="check" style={styles.itemIcon} /> : null}
-          <Text style={styles.itemText}>{this.props.name}</Text>
+          <CLText style={styles.itemText}>
+            {this.props.name} ({this.props.symbol})
+          </CLText>
         </View>
       </TouchableHighlight>
     );
@@ -88,7 +103,7 @@ export class QuotePickerSettingsItem extends React.Component {
   render() {
     return (
       <TouchableHighlight onPress={() => this.props.onPress(this.props.name)}>
-        <Text style={[styles.item, styles.itemText]}>{this.props.name} quote currency</Text>
+        <CLText style={[styles.item, styles.itemText]}>{this.props.name} quote currency</CLText>
       </TouchableHighlight>
     );
   }
