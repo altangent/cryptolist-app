@@ -15,6 +15,7 @@ import { QueryComponent } from 'regraph-request';
 import { SearchModal } from './components/search-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getFavorites } from '../../library/currency-favorite';
+import { getQuotes } from '../../library/quote-currency-persister';
 
 const DEFAULT_FILTER = '%';
 const CURRENCY_QUERY = `
@@ -106,6 +107,10 @@ export class HomeComponent extends React.Component {
 
     this.refresh = this.refresh.bind(this);
     this.search = this.search.bind(this);
+    this.updateQuote = this.updateQuote.bind(this);
+
+    this.updateQuote();
+    this.willFocusSubscription = props.navigation.addListener('willFocus', this.updateQuote);
 
     this.state = {
       refreshing: false,
@@ -119,8 +124,18 @@ export class HomeComponent extends React.Component {
     getData: PropTypes.func.isRequired,
   };
 
+  updateQuote() {
+    getQuotes().then(quotes => {
+      this.setState({ quoteSymbol: quotes.primary });
+    });
+  }
+
   componentDidMount() {
     this.props.navigation.setParams({ toggleSearchVisibility: this.toggleSearchVisibility });
+  }
+
+  componentWillUnmount() {
+    this.willFocusSubscription.remove();
   }
 
   toggleSearchVisibility = () => {
@@ -189,6 +204,7 @@ export class Home extends React.Component {
       favoritesLoaded: false,
     };
   }
+
   render() {
     return (
       this.state.favoritesLoaded && (
