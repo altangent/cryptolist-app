@@ -4803,8 +4803,9 @@ regjsparser@^0.1.4:
   dependencies:
     jsesc "~0.5.0"
 
-"regraph-request@file:../regraph-request":
+regraph-request@^0.0.5:
   version "0.0.5"
+  resolved "https://registry.yarnpkg.com/regraph-request/-/regraph-request-0.0.5.tgz#4c0e78d27de56da126b5aa805f0762254801ea51"
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"
