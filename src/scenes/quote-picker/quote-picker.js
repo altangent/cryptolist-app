@@ -17,14 +17,11 @@ export class QuotePicker extends React.Component {
   constructor(props) {
     super(props);
 
-    console.log(
-      '123',
-      getQuotes().then(quotes => {
-        let selected = quotes[props.navigation.getParam('name').toLowerCase()];
-        console.log(selected);
-        this.setState({ selected, quotes });
-      })
-    );
+    getQuotes().then(quotes => {
+      let selected = quotes[props.navigation.getParam('name').toLowerCase()];
+      this.setState({ selected, quotes });
+    });
+
     this.select = this.select.bind(this);
   }
 
@@ -39,7 +36,6 @@ export class QuotePicker extends React.Component {
   };
 
   select(selected) {
-    console.log(selected);
     let quotes = this.state.quotes;
     quotes[this.props.navigation.getParam('name').toLowerCase()] = selected;
     saveQuotes(quotes).then(() => {

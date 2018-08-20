@@ -1,50 +1,42 @@
 import React from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
-import { LineChart, YAxis, Grid } from 'react-native-svg-charts';
+import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
 import * as shape from 'd3-shape';
 import PropTypes from 'prop-types';
 import { Query } from 'regraph-request';
 
-const MARKET_QUERY = `query Currency($currencySymbol: String!) {
+const MARKET_QUERY = `
+query Currency(
+  $currencySymbol: String!,
+  $resolution: CandleResolution!,
+  $start: Int,
+  $end: Int,
+  $quoteSymbol: String
+) {
   currency(currencySymbol: $currencySymbol) {
     id
-    currencyName
-    currentSupply
-    totalSupply
-    currencySymbol
-    marketCap
-    marketCapRank
-    markets(aggregation: VWAP) {
+    markets(aggregation: VWAP, filter: {quoteSymbol_like: $quoteSymbol}) {
       data {
         marketSymbol
-        openedOn
-        openedOnDate
-        candles(resolution: _1m) {
-          data
-        }
+        ohlcv(resolution: $resolution, start: $start, end: $end, sort:OLD_FIRST)
       }
     }
   }
 }
+
 `;
 
 export class ChartComponent extends React.PureComponent {
   static propTypes = {
     currencySymbol: PropTypes.string.isRequired,
     quoteSymbol: PropTypes.string.isRequired,
+    start: PropTypes.number,
+    end: PropTypes.number,
+    resolution: PropTypes.object,
   };
 
   render() {
-    const Gradient = () => (
-      <Defs key={'gradient'}>
-        <LinearGradient id={'gradient'} x1={'0'} x2={'0'} y1={'0'} y2={'100%'}>
-          <Stop offset={'0%'} stopColor={'#23c5d5'} />
-          <Stop offset={'100%'} stopColor={'#23d59b'} />
-        </LinearGradient>
-      </Defs>
-    );
-
     let currency = this.props.data.currency;
 
     if (!currency) {
@@ -52,9 +44,7 @@ export class ChartComponent extends React.PureComponent {
     }
 
     let markets = currency.markets.data;
-    let market = markets.find(market => {
-      return market.marketSymbol.endsWith(this.props.quoteSymbol.toUpperCase());
-    });
+    let market = markets[0];
 
     if (!market)
       return (
@@ -62,7 +52,8 @@ export class ChartComponent extends React.PureComponent {
           <Text>No market found</Text>
         </View>
       );
-    const data = market.candles.data.map(candle => candle[1]);
+
+    const data = market.ohlcv.map(candle => candle[1]);
     const contentInset = { top: 20, bottom: 20 };
 
     return (
@@ -86,7 +77,12 @@ export class ChartComponent extends React.PureComponent {
           contentInset={contentInset}
         >
           <Grid />
-          <Gradient />
+          <Defs key={'gradient'}>
+            <LinearGradient id={'gradient'} x1={'0'} x2={'0'} y1={'0'} y2={'100%'}>
+              <Stop offset={'0%'} stopColor={'#23c5d5'} />
+              <Stop offset={'100%'} stopColor={'#23d59b'} />
+            </LinearGradient>
+          </Defs>
         </LineChart>
       </View>
     );
@@ -95,4 +91,8 @@ export class ChartComponent extends React.PureComponent {
 
 export const Chart = Query(ChartComponent, MARKET_QUERY, props => ({
   currencySymbol: props.currencySymbol,
+  resolution: props.resolution.value,
+  start: props.start,
+  end: props.end,
+  quoteSymbol: props.quoteSymbol,
 }));
