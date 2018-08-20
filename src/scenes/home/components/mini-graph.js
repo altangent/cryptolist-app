@@ -1,9 +1,10 @@
 import React from 'react';
-import Svg, { LinearGradient, Path, Defs, Stop } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Query } from 'regraph-request';
 
+const STROKE_WIDTH = 2;
 const numberOfDays = 1;
 const CURRENCY_QUERY = `
   query CurrencyQuery(
@@ -78,16 +79,19 @@ export const MiniGraphComponent = ({ data, width, height, isPositive }) => {
   }));
   if (!actualPoints.length) return null;
   let paths = actualPoints.map(price => `L${price.x},${price.y}`);
-  let startingPosition = `M0,${height}`;
+  let startingPosition = `M${paths[0].substring(1)}`;
   let path = `${startingPosition}${paths.join('')}L${width},${
     actualPoints[actualPoints.length - 1].y
-  }L${width},${height}`;
-  let fill = `${path}z`;
+  }L${width},${actualPoints[actualPoints.length - 1].y}`;
 
   return (
     <Svg className="mini-graph" width={width} height={height} xmlns="http://www.w3.org/2000/svg">
-      <Path d={path} stroke={isPositive ? 'green' : 'orange'} />
-      <Path d={fill} fill={isPositive ? '#c5e4b8' : '#f7d994'} />
+      <Path
+        d={path}
+        fill="transparent"
+        stroke={isPositive ? '#74A321' : '#FF7777'}
+        strokeWidth={STROKE_WIDTH}
+      />
     </Svg>
   );
 };

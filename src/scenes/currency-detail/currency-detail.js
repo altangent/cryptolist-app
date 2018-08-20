@@ -1,15 +1,16 @@
 import React from 'react';
 import { Query } from 'regraph-request';
-import { Text, View, StyleSheet, PixelRatio, ActivityIndicator, Dimensions } from 'react-native';
+import { View, StyleSheet, PixelRatio, ActivityIndicator, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
+import CryptoIcon from 'react-native-crypto-icons';
+import moment from 'moment';
 import { ScrollContainer } from '../../components/container';
 import { CLText } from '../../components/cl-text';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Chart } from './components/chart';
 import { CurrencyInformationItem } from './components/currency-information-item';
 import { MarketInfo } from './components/market-info';
-import CryptoIcon from 'react-native-crypto-icons';
-import { CLButton } from '../../components/button';
+import { Resolutions, ResolutionGroup, StartEndGroup } from './components/chart-tools';
 
 const CURRENCY_QUERY = `
 query Currency($currencySymbol: String!) {
@@ -35,12 +36,34 @@ query Currency($currencySymbol: String!) {
 `;
 
 export class CurrencyDetailComponent extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.changeResolution = this.changeResolution.bind(this);
+    this.changeStartEnd = this.changeStartEnd.bind(this);
+
+    this.state = {
+      resolution: Resolutions.find(r => r.value === '_1h'),
+      start: moment()
+        .subtract(3, 'months')
+        .unix(),
+      end: moment().unix(),
+    };
+  }
+
   static propTypes = {
     navigation: PropTypes.object.isRequired,
   };
 
+  changeResolution(resolution) {
+    this.setState({ resolution });
+  }
+
+  changeStartEnd(start, end) {
+    this.setState({ start, end });
+  }
+
   render() {
-    const { navigate } = this.props.navigation;
     let { currency } = this.props.data;
     if (!currency) {
       return <ActivityIndicator />;
@@ -66,10 +89,6 @@ export class CurrencyDetailComponent extends React.Component {
     return (
       <ScrollContainer style={[style.container]}>
         <View style={[style.header]}>
-          <CLButton>
-            <Text style={{ color: 'white', marginRight: 5 }}>5M</Text>
-            <FontAwesome name="caret-down" style={{ color: 'white' }} />
-          </CLButton>
           <View style={[style.priceContainer]}>
             <View>
               <CLText style={style.price}>{price}</CLText>
@@ -90,7 +109,18 @@ export class CurrencyDetailComponent extends React.Component {
           <Chart
             currencySymbol={this.props.data.currency.currencySymbol}
             quoteSymbol={this.props.navigation.getParam('quoteSymbol')}
+            resolution={this.state.resolution}
+            start={this.state.start}
+            end={this.state.end}
           />
+          <View style={style.chartTools}>
+            <ResolutionGroup resolution={this.state.resolution} onChange={this.changeResolution} />
+            <StartEndGroup
+              start={this.state.start}
+              end={this.state.end}
+              onChange={this.changeStartEnd}
+            />
+          </View>
         </View>
         <View
           style={{
@@ -189,6 +219,10 @@ const style = StyleSheet.create({
     color: 'grey',
     fontSize: 10,
     marginLeft: 5,
+  },
+  chartTools: {
+    flex: 1,
+    flexDirection: 'column',
   },
   border: {
     borderWidth: 0.5 * PixelRatio.get(),

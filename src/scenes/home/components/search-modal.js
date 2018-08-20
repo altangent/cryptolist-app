@@ -40,7 +40,6 @@ export class SearchModal extends React.Component {
             blurOnSubmit={true}
             onSubmitEditing={() => this.submit()}
             cancelButtonTitle="Cancel"
-            onCancel={() => console.log('123')}
             placeholder="Search"
             autoCorrect={false}
             autoCapitalize="none"

@@ -62,12 +62,6 @@ export class MarketInfoComponent extends React.Component {
     let quoteVolume = this.getQuoteVolume(this.props.data.currency.markets.data);
     let exchangeVolume = this.getExchangeVolume(this.props.data.currency.markets.data);
 
-    console.log('qv', quoteVolume);
-    console.log('ev', exchangeVolume);
-
-    console.log(Object.values(quoteVolume));
-    console.log(Object.values(exchangeVolume));
-
     const quoteData = Object.values(quoteVolume)
       .filter(value => value > 0)
       .map((value, index) => ({
