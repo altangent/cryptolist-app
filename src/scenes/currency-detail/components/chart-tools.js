@@ -1,7 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import moment, { min } from 'moment';
-import { TouchableWithoutFeedback, Modal, StyleSheet, DatePickerIOS, View } from 'react-native';
+import moment from 'moment';
+import {
+  Button,
+  TouchableWithoutFeedback,
+  Modal,
+  StyleSheet,
+  DatePickerIOS,
+  View,
+  Dimensions,
+} from 'react-native';
 import { CLButton } from '../../../components/button';
 
 export const Resolutions = [
@@ -118,36 +126,23 @@ export class StartEndGroup extends React.Component {
         {this.state.pickerShown && (
           <Modal animationType="fade" transparent={true} visible={this.state.pickerShown}>
             <TouchableWithoutFeedback onPress={this.hidePicker}>
-              <View
-                style={{
-                  flex: 1,
-                  backgroundColor: 'rgba(52, 52, 52, 0.8)',
-                  flexDirection: 'column',
-                  alignContent: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <View
-                  style={{
-                    backgroundColor: 'white',
-                    justifyContent: 'center',
-                    alignItems: 'flex-start',
-                    flexDirection: 'row',
-                  }}
-                >
-                  {/* <View style={{ flex: 1 }}> */}
-                  <DatePickerIOS
-                    mode="datetime"
-                    date={this.state.pickerValue}
-                    onDateChange={this.updatePickerValue}
-                    isVisible={true}
-                    style={{ flex: 1 }}
-                    {...(this.state.minimumDate ? { minimumDate: this.state.minimumDate } : {})}
-                    {...(this.state.maximumDate ? { maximumDate: this.state.maximumDate } : {})}
-                  />
-                  <CLButton onPress={this.hidePicker} title="Done" />
-                  {/* </View> */}
+              <View style={style.modalBg}>
+                <View style={style.modalContantContainer}>
+                  <View style={style.modalPush} />
+                  <View style={style.pickerContainer}>
+                    <View style={style.pickerButton}>
+                      <Button onPress={this.hidePicker} title="Done" />
+                    </View>
+                    <DatePickerIOS
+                      mode="datetime"
+                      date={this.state.pickerValue}
+                      onDateChange={this.updatePickerValue}
+                      isVisible={true}
+                      style={{ flex: 1 }}
+                      {...(this.state.minimumDate ? { minimumDate: this.state.minimumDate } : {})}
+                      {...(this.state.maximumDate ? { maximumDate: this.state.maximumDate } : {})}
+                    />
+                  </View>
                 </View>
               </View>
             </TouchableWithoutFeedback>
@@ -170,4 +165,34 @@ const style = StyleSheet.create({
     justifyContent: 'space-evenly',
   },
   resolutionItem: {},
+  modalBg: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+  },
+  modalContantContainer: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+  },
+  modalPush: {
+    flex: 3,
+  },
+  pickerContainer: {
+    flex: 1,
+    position: 'absolute',
+    bottom: 0,
+    width: Dimensions.get('screen').width,
+    backgroundColor: 'white',
+  },
+  pickerButton: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    backgroundColor: '#fafaf8',
+    borderBottomColor: '#CDCDCD',
+    borderBottomWidth: 1,
+  },
 });
