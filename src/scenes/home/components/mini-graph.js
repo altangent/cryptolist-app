@@ -8,7 +8,7 @@ const STROKE_WIDTH = 2;
 const numberOfDays = 1;
 const CURRENCY_QUERY = `
   query CurrencyQuery(
-    $symbol: String
+    $symbol: String!
     $quoteSymbol: String
     $start: Int
     $end: Int
@@ -20,18 +20,14 @@ const CURRENCY_QUERY = `
         data {
           id
           marketSymbol
-          candles(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST) {
-            data
-          }
+          ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
         }
       }
       btcMarket: markets(filter: { quoteSymbol_eq: "BTC" }, aggregation: VWAP) {
         data {
           id
           marketSymbol
-          candles(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST) {
-            data
-          }
+          ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
         }
       }
     }
@@ -58,15 +54,15 @@ export const MiniGraphComponent = ({ data, width, height, isPositive }) => {
   let btcMarketData = currency.btcMarket.data;
 
   if (!marketsData.length) {
-    if (btcMarketData.length && btcMarketData[0].candles) {
+    if (btcMarketData.length && btcMarketData[0].ohlcv) {
       let quotePrice = data.btcPrice.markets.data[0].ticker.last;
-      prices = btcMarketData[0].candles.data.map(candle => {
+      prices = btcMarketData[0].ohlcv.map(candle => {
         return candle[1] * quotePrice;
       });
     } else return null;
   } else {
-    if (marketsData[0].candles) {
-      prices = marketsData[0].candles.data.map(x => x[1]);
+    if (marketsData[0].ohlcv) {
+      prices = marketsData[0].ohlcv.map(x => x[1]);
     } else return null;
   }
 
