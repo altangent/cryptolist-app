@@ -6,7 +6,7 @@ import { PieChart } from 'react-native-svg-charts';
 import { Query } from 'regraph-request';
 
 const MARKETS_QUERY = `
-query MarketQuery($currencySymbol: String) {
+query MarketQuery($currencySymbol: String!) {
   currency(currencySymbol: $currencySymbol) {
     id
     markets {
