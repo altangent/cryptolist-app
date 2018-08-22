@@ -137,8 +137,6 @@ export class StartEndGroup extends React.Component {
                       mode="datetime"
                       date={this.state.pickerValue}
                       onDateChange={this.updatePickerValue}
-                      isVisible={true}
-                      style={{ flex: 1 }}
                       {...(this.state.minimumDate ? { minimumDate: this.state.minimumDate } : {})}
                       {...(this.state.maximumDate ? { maximumDate: this.state.maximumDate } : {})}
                     />
