@@ -26,7 +26,6 @@ query Exchanges ($currencySymbol: String) {
     }
   }
 }
-
 `;
 
 export class MarketInfoComponent extends React.Component {
@@ -126,7 +125,7 @@ export class MarketInfoComponent extends React.Component {
       },
       key: `exchange-${value.name}`,
     }));
-    exchangeVolume = exchangeVolume.slice(0, 4);
+    let exchangeVolumeSlice = exchangeVolume.slice(0, 4);
 
     let quoteVolume = this.getQuoteVolume(this.props.data.exchanges.data);
     let quoteData = Object.keys(quoteVolume).map(value => ({
@@ -146,19 +145,23 @@ export class MarketInfoComponent extends React.Component {
         volume: quoteVolume[value],
         percent: quoteVolume[value] / totalQuoteVolume,
         key: value,
-        color: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6), // Random color
+        color: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6),
       }))
-      .sort((a, b) => (a.volume > b.volume ? -1 : 1))
-      .slice(0, 4);
+      .sort((a, b) => (a.volume > b.volume ? -1 : 1));
+    let quoteVolumeWithPercentagesSlice = quoteVolumeWithPercentages.slice(0, 4);
 
     return (
       <View style={style.container}>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('ExchangeVolume')}>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate('ExchangeVolume', { volume: exchangeVolume })
+          }
+        >
           <View style={style.marketInfoContainer}>
             <CLText style={style.name}>Volume / Exchange</CLText>
             <View style={style.pieChartContainer}>
               <View style={style.flatListContainer}>
-                {exchangeVolume.map(this._renderListItem)}
+                {exchangeVolumeSlice.map(this._renderListItem)}
               </View>
               <View style={style.pieContainer}>
                 <PieChart style={style.circle} padAngle={0} data={exchangeData} />;
@@ -166,7 +169,13 @@ export class MarketInfoComponent extends React.Component {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => this.props.navigation.navigate('QuoteVolume')}>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate('QuoteVolume', {
+              volume: quoteVolumeWithPercentages,
+            })
+          }
+        >
           <View style={style.marketInfoContainer}>
             <CLText style={style.name}>Volume / Quote</CLText>
             <View style={style.pieChartContainer}>
@@ -174,7 +183,7 @@ export class MarketInfoComponent extends React.Component {
                 <PieChart style={style.circle} padAngle={0} data={quoteData} />;
               </View>
               <View style={style.flatListContainer}>
-                {quoteVolumeWithPercentages.map(this._renderListItem)}
+                {quoteVolumeWithPercentagesSlice.map(this._renderListItem)}
               </View>
             </View>
           </View>
