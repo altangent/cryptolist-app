@@ -1,10 +1,13 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 
-export const QuoteVolume = () => {
-  return (
-    <View>
-      <Text>Quote Volume</Text>
-    </View>
-  );
-};
+export class QuoteVolume extends React.Component {
+  render() {
+    console.log(this.props.navigation.getParam('volume'));
+    return (
+      <View>
+        <Text>Quote Volume</Text>
+      </View>
+    );
+  }
+}
