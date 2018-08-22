@@ -122,14 +122,7 @@ export class CurrencyDetailComponent extends React.Component {
             />
           </View>
         </View>
-        <View
-          style={{
-            width: Dimensions.get('screen').width,
-            flex: 1,
-            flexDirection: 'row',
-            marginTop: 20,
-          }}
-        >
+        <View style={style.currencyInformationContainer}>
           <CurrencyInformationItem
             name="Market Cap"
             value={this.props.data.currency.marketCap.toLocaleString()}
@@ -222,6 +215,15 @@ const style = StyleSheet.create({
     color: 'grey',
     fontSize: 10,
     marginLeft: 5,
+  },
+  currencyInformationContainer: {
+    width: Dimensions.get('screen').width - 20,
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 1,
+    borderColor: '#cccccc',
   },
   chartTools: {
     flex: 1,
