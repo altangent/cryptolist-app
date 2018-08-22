@@ -66,7 +66,7 @@ export class MarketInfoComponent extends React.Component {
   }
 
   getQuoteVolume(exchanges) {
-    let x = exchanges
+    return exchanges
       .map(exchange =>
         exchange.markets.data.map(market => {
           let [exchange, pair] = market.marketSymbol.split(':');
@@ -78,31 +78,35 @@ export class MarketInfoComponent extends React.Component {
           };
         })
       )
-      .map(exchange => {});
-    console.log(x);
+      .reduce((reducer, exchange) => {
+        exchange.map(market => {
+          let quote = market.quote;
+          if (reducer[quote]) reducer[quote] += market.volume;
+          else reducer[quote] = market.volume;
+        });
+        return reducer;
+      }, {});
   }
 
-  _renderListItem(item) {
+  _renderListItem({ name, volume, percent, key, color }) {
     return (
-      <View key={item.key} style={[style.row, style.exchangeContainer]}>
+      <View key={key} style={[style.row, style.exchangeContainer]}>
         <View
           style={[
             style.exchangeColor,
             {
-              backgroundColor: item.color,
+              backgroundColor: color,
             },
           ]}
         />
         <View style={style.column}>
-          <CLText style={{ paddingLeft: 10 }}>{item.name}</CLText>
+          <CLText style={{ paddingLeft: 10 }}>{name}</CLText>
           <View style={[style.row, style.exchangeDetailInfo]}>
             <CLText style={style.exchangeDetailInfoText}>
-              {item.volume.toFixed(2)}
+              {volume.toFixed(2)}
               {this.props.currencySymbol}
             </CLText>
-            <CLText style={[style.exchangeDetailInfoText]}>
-              {(item.percent * 100).toFixed(2)}%
-            </CLText>
+            <CLText style={[style.exchangeDetailInfoText]}>{(percent * 100).toFixed(2)}%</CLText>
           </View>
         </View>
       </View>
@@ -115,19 +119,37 @@ export class MarketInfoComponent extends React.Component {
     }
 
     let exchangeVolume = this.getExchangesVolume(this.props.data.exchanges.data);
-    const exchangeData = exchangeVolume.map(value => {
-      return {
-        value: value.volume,
-        svg: {
-          fill: value.color,
-        },
-        key: `exchange-${value.name}`,
-      };
-    });
-
+    const exchangeData = exchangeVolume.map(value => ({
+      value: value.volume,
+      svg: {
+        fill: value.color,
+      },
+      key: `exchange-${value.name}`,
+    }));
     exchangeVolume = exchangeVolume.slice(0, 4);
 
     let quoteVolume = this.getQuoteVolume(this.props.data.exchanges.data);
+    let quoteData = Object.keys(quoteVolume).map(value => ({
+      value: quoteVolume[value],
+      key: `quote-${value}`,
+      svg: {
+        fill: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6),
+      },
+    }));
+    let totalQuoteVolume = Object.values(quoteVolume).reduce(
+      (reducer, current) => reducer + current,
+      0
+    );
+    let quoteVolumeWithPercentages = Object.keys(quoteVolume)
+      .map(value => ({
+        name: value,
+        volume: quoteVolume[value],
+        percent: quoteVolume[value] / totalQuoteVolume,
+        key: value,
+        color: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6), // Random color
+      }))
+      .sort((a, b) => (a.volume > b.volume ? -1 : 1))
+      .slice(0, 4);
 
     return (
       <View style={style.container}>
@@ -149,10 +171,10 @@ export class MarketInfoComponent extends React.Component {
             <CLText style={style.name}>Volume / Quote</CLText>
             <View style={style.pieChartContainer}>
               <View style={style.pieContainer}>
-                <PieChart style={style.circle} padAngle={0} data={exchangeData} />;
+                <PieChart style={style.circle} padAngle={0} data={quoteData} />;
               </View>
               <View style={style.flatListContainer}>
-                {exchangeVolume.map(this._renderListItem)}
+                {quoteVolumeWithPercentages.map(this._renderListItem)}
               </View>
             </View>
           </View>
@@ -203,6 +225,7 @@ const style = StyleSheet.create({
   flatListContainer: {
     width: (SCREEN_WIDTH - 30) / ITEMS_PER_ROW,
     flex: 1,
+    marginLeft: 10,
   },
   pieChartContainer: {
     width: SCREEN_WIDTH,
@@ -217,6 +240,10 @@ const style = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     paddingTop: 10,
+    borderColor: '#cccccc',
+    borderTopWidth: 1,
+    marginTop: 10,
+    width: SCREEN_WIDTH - 20,
   },
   exchangeColor: {
     width: 20,
