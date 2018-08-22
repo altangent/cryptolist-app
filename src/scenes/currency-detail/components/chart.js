@@ -61,20 +61,20 @@ export class ChartComponent extends React.PureComponent {
         <YAxis
           data={data}
           contentInset={contentInset}
+          numberOfTicks={5}
           svg={{
             fill: 'grey',
             fontSize: 10,
           }}
-          numberOfTicks={5}
         />
         <LineChart
           style={{ flex: 1, marginLeft: 16 }}
           data={data}
           curve={shape.curveNatural}
+          contentInset={contentInset}
           svg={{
             stroke: 'url(#gradient)',
           }}
-          contentInset={contentInset}
         >
           <Grid />
           <Defs key={'gradient'}>

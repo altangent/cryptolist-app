@@ -151,7 +151,10 @@ export class CurrencyDetailComponent extends React.Component {
             marginTop: 20,
           }}
         >
-          <MarketInfo currencySymbol={this.props.navigation.getParam('currencySymbol')} />
+          <MarketInfo
+            currencySymbol={this.props.navigation.getParam('currencySymbol')}
+            navigation={this.props.navigation}
+          />
         </View>
       </ScrollContainer>
     );
