@@ -154,7 +154,13 @@ export class MarketInfoComponent extends React.Component {
       <View style={style.container}>
         <TouchableOpacity
           onPress={() =>
-            this.props.navigation.navigate('ExchangeVolume', { volume: exchangeVolume })
+            this.props.navigation.navigate('VolumeChart', {
+              volume: exchangeVolume,
+              currencySymbol: this.props.currencySymbol,
+              currencyName: this.props.navigation.getParam('currencyName'),
+              quoteSymbol: this.props.navigation.getParam('quoteSymbol'),
+              volumeKind: 'exchange',
+            })
           }
         >
           <View style={style.marketInfoContainer}>
@@ -171,8 +177,12 @@ export class MarketInfoComponent extends React.Component {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() =>
-            this.props.navigation.navigate('QuoteVolume', {
+            this.props.navigation.navigate('VolumeChart', {
               volume: quoteVolumeWithPercentages,
+              currencySymbol: this.props.currencySymbol,
+              currencyName: this.props.navigation.getParam('currencyName'),
+              quoteSymbol: this.props.navigation.getParam('quoteSymbol'),
+              volumeKind: 'quote',
             })
           }
         >

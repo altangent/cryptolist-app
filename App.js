@@ -3,8 +3,7 @@ import { Home } from './src/scenes/home/home';
 import { CurrencyDetail } from './src/scenes/currency-detail/currency-detail';
 import { Settings } from './src/scenes/settings/settings';
 import { QuotePicker } from './src/scenes/quote-picker/quote-picker';
-import { ExchangeVolume } from './src/scenes/volume/exchange-volume';
-import { QuoteVolume } from './src/scenes/volume/quote-volume';
+import { VolumeChart } from './src/scenes/volume/volume-chart';
 import { RegraphRequest } from 'regraph-request';
 import React from 'react';
 
@@ -14,8 +13,7 @@ const Navigator = createStackNavigator(
     Detail: CurrencyDetail,
     Settings,
     QuotePicker,
-    ExchangeVolume,
-    QuoteVolume,
+    VolumeChart,
   },
   {
     initialRouteName: 'Home',
