@@ -16,12 +16,7 @@ export class CLButton extends React.Component {
         onPress={this.props.onPress}
         title={this.props.title}
         underlayColor="#9CF0DE"
-        style={[
-          style.view,
-          {
-            backgroundColor: this.props.active ? '#23D59B' : 'transparent',
-          },
-        ]}
+        style={[style.view, this.props.active ? style.active : style.inactive]}
       >
         <Text
           style={[
@@ -51,5 +46,12 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 3,
+  },
+  active: {
+    backgroundColor: '#23D59B',
+  },
+  inactive: {
+    borderWidth: 1,
+    borderColor: '#cccccc',
   },
 });

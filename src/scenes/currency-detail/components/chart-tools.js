@@ -161,6 +161,7 @@ const style = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    marginTop: 10,
   },
   resolutionItem: {},
   modalBg: {
