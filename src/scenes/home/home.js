@@ -89,6 +89,7 @@ query AllCurrencies ($filter:String, $favorites:[String]) {
       marketSymbol
       ticker {
         last
+        percentChange
       }
     }
   }
