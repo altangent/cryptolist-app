@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, ActivityIndicator } from 'react-native';
-import { LineChart, YAxis, XAxis, Grid } from 'react-native-svg-charts';
+import { View, ActivityIndicator } from 'react-native';
+import { LineChart, YAxis, Grid } from 'react-native-svg-charts';
 import { Defs, LinearGradient, Stop } from 'react-native-svg';
 import * as shape from 'd3-shape';
 import PropTypes from 'prop-types';
 import { Query } from 'regraph-request';
+import { CLText } from '../../../components/cl-text';
 
 const MARKET_QUERY = `
 query Currency(
@@ -46,7 +47,7 @@ export class ChartComponent extends React.PureComponent {
     if (!market)
       return (
         <View>
-          <Text>No market found</Text>
+          <CLText>No market found</CLText>
         </View>
       );
 

@@ -17,29 +17,23 @@ const CURRENCY_QUERY = `
     currency(currencySymbol: $symbol) {
       id
       markets(filter: { quoteSymbol_eq: $quoteSymbol }, aggregation: VWA) {
-        data {
-          id
-          marketSymbol
-          ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
-        }
+        id
+        marketSymbol
+        ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
       }
       btcMarket: markets(filter: { quoteSymbol_eq: "BTC" }, aggregation: VWA) {
-        data {
-          id
-          marketSymbol
-          ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
-        }
+        id
+        marketSymbol
+        ohlcv(start: $start, end: $end, resolution: $resolution, sort: OLD_FIRST)
       }
     }
     btcPrice: currency(currencySymbol: "BTC") {
       id
       markets(filter: { quoteSymbol_eq: $quoteSymbol }, aggregation: VWA) {
-        data {
-          id
-          marketSymbol
-          ticker {
-            last
-          }
+        id
+        marketSymbol
+        ticker {
+          last
         }
       }
     }
@@ -51,7 +45,7 @@ export const MiniGraphComponent = ({ data, width, height, isPositive }) => {
   let prices;
   let currency = data.currency;
   let marketsData = currency.markets;
-  let btcMarketData = currency.btcMarket.data;
+  let btcMarketData = currency.btcMarket;
 
   if (!marketsData.length) {
     if (btcMarketData.length && btcMarketData[0].ohlcv) {

@@ -75,11 +75,21 @@ export class CurrencyListItem extends React.Component {
               <CLText style={styles.subtitle}>{currency.symbol}</CLText>
               <CLText style={styles.title}>{currency.name}</CLText>
             </View>
-            <View style={styles.containerItem}>
-              <CLText style={styles.price}>{currency.price}</CLText>
-              <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
-                {currency.percentChange}
-              </CLText>
+            <View style={styles.containerItemLg}>
+              <View style={styles.priceRow}>
+                <CLText style={styles.price}>{currency.price}</CLText>
+                <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
+                  {currency.percentChange}
+                </CLText>
+              </View>
+              {currency.secondaryQuote && (
+                <View style={styles.priceRow}>
+                  <CLText style={styles.price}>{currency.secondaryQuote.price}</CLText>
+                  <CLText style={positiveChange ? styles.positiveChange : styles.negativeChange}>
+                    {currency.secondaryQuote.percentChange}
+                  </CLText>
+                </View>
+              )}
             </View>
             <View style={styles.containerItem}>
               <MiniGraph
@@ -117,11 +127,18 @@ const styles = StyleSheet.create({
   },
   title: { fontSize: 13 },
   subtitle: { fontSize: 10 },
+  containerItemLg: { flex: 3 },
   containerItem: { flex: 2 },
   containerItemSm: { flex: 1 },
   price: {
     paddingTop: 3,
     fontSize: 10,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    paddingRight: 5,
   },
   positiveChange: {
     fontSize: 10,

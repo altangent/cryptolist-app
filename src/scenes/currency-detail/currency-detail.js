@@ -67,12 +67,15 @@ export class CurrencyDetailComponent extends React.Component {
     if (!currency) {
       return <ActivityIndicator />;
     }
+    let quoteSymbol = this.props.navigation.getParam('quoteSymbol');
+    let secondaryQuoteSymbol = this.props.navigation.getParam('secondaryQuoteSymbol');
 
     let markets = currency.markets;
     let market = markets.find(market => {
-      return market.marketSymbol.endsWith(
-        this.props.navigation.getParam('quoteSymbol').toUpperCase()
-      );
+      return market.marketSymbol.endsWith(quoteSymbol.toUpperCase());
+    });
+    let secondaryMarket = markets.find(market => {
+      return market.marketSymbol.endsWith(secondaryQuoteSymbol.toUpperCase());
     });
 
     let marketCap = 0;
@@ -80,11 +83,13 @@ export class CurrencyDetailComponent extends React.Component {
     if (market) {
       marketCap = formatCurrency(
         Math.round(market.ticker.last * this.props.data.currency.currentSupply),
-        this.props.navigation.getParam('quoteSymbol')
+        quoteSymbol
       );
+    }
+    if (secondaryMarket) {
       secondaryMarketCap = formatCurrency(
-        Math.round(market.ticker.last * this.props.data.currency.currentSupply),
-        this.props.navigation.getParam('secondaryQuoteSymbol')
+        Math.round(secondaryMarket.ticker.last * this.props.data.currency.currentSupply),
+        secondaryQuoteSymbol
       );
     }
 
@@ -99,12 +104,24 @@ export class CurrencyDetailComponent extends React.Component {
       isPositive = change >= 0;
     }
 
+    let secondaryPrice;
+    if (!secondaryMarket) {
+      secondaryPrice = 0;
+    } else {
+      secondaryPrice = secondaryMarket.ticker.last;
+    }
+
     return (
       <ScrollContainer style={[style.container]}>
         <View style={[style.header]}>
           <View style={[style.priceContainer]}>
             <View>
-              <CLText style={style.price}>{price}</CLText>
+              <CLText style={style.price}>{formatCurrency(price, quoteSymbol)}</CLText>
+            </View>
+            <View>
+              <CLText style={style.price}>
+                {formatCurrency(secondaryPrice, secondaryQuoteSymbol)}
+              </CLText>
             </View>
             <View style={[style.priceChangeContainer]}>
               <FontAwesome
@@ -121,19 +138,24 @@ export class CurrencyDetailComponent extends React.Component {
         <View>
           <Chart
             currencySymbol={this.props.data.currency.currencySymbol}
-            quoteSymbol={this.props.navigation.getParam('quoteSymbol')}
+            quoteSymbol={quoteSymbol}
             resolution={this.state.resolution}
             start={this.state.start}
             end={this.state.end}
           />
-          <View style={style.chartTools}>
-            <ResolutionGroup resolution={this.state.resolution} onChange={this.changeResolution} />
-            <StartEndGroup
-              start={this.state.start}
-              end={this.state.end}
-              onChange={this.changeStartEnd}
-            />
-          </View>
+          {market && (
+            <View style={style.chartTools}>
+              <ResolutionGroup
+                resolution={this.state.resolution}
+                onChange={this.changeResolution}
+              />
+              <StartEndGroup
+                start={this.state.start}
+                end={this.state.end}
+                onChange={this.changeStartEnd}
+              />
+            </View>
+          )}
         </View>
         <View style={style.currencyInformationContainer}>
           <CurrencyInformationItem

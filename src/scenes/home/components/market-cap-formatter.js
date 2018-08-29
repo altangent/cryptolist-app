@@ -48,7 +48,21 @@ const get24HourVolume = (market, btcMarket, priceOfBtc, quoteSymbol) => {
   else return asCurrency(0, quoteSymbol);
 };
 
-export const marketCapFormat = (currencies, btcNode, quoteSymbol) => {
+const getPrice = (markets, btcMarket, quoteSymbol) => {
+  const hasMarkets = !!markets;
+  const market = hasMarkets
+    ? markets.find(market => market.marketSymbol.endsWith(quoteSymbol))
+    : null;
+  let lastPrice = hasMarkets && market && market.ticker ? market.ticker.last : 0;
+  const priceInBtc = btcMarket && btcMarket.ticker ? btcMarket.ticker.last : 1;
+  const priceOfBtc = getPriceOfBtc(btcMarket, quoteSymbol);
+  if (lastPrice === 0 && hasMarkets) {
+    lastPrice = calculatePriceFromBtc(priceInBtc, priceOfBtc);
+  }
+  return asCurrency(lastPrice, quoteSymbol, 8);
+};
+
+export const marketCapFormat = (currencies, btcNode, quoteSymbol, secondaryQuoteSymbol) => {
   if (!currencies.length) return [];
   quoteSymbol = quoteSymbol.toUpperCase();
 
@@ -62,11 +76,14 @@ export const marketCapFormat = (currencies, btcNode, quoteSymbol) => {
     const percentChange = getPercentageChange(currency.markets, btcNode, quoteSymbol);
     const btcMarket = currency.markets.find(market => market.marketSymbol.endsWith('BTC'));
     const priceInBtc = btcMarket && btcMarket.ticker ? btcMarket.ticker.last : 1;
+
     const volume = get24HourVolume(market, btcMarket, priceOfBtc, quoteSymbol);
 
-    let lastPrice = hasMarkets && market && market.ticker ? market.ticker.last : 0;
-    if (lastPrice === 0 && hasMarkets) {
-      lastPrice = calculatePriceFromBtc(priceInBtc, priceOfBtc);
+    if (secondaryQuoteSymbol) {
+      secondaryQuote = {
+        percentChange: getPercentageChange(currency.markets, btcNode, quoteSymbol),
+        price: getPrice(currency.markets, btcNode, secondaryQuoteSymbol),
+      };
     }
 
     return {
@@ -76,9 +93,10 @@ export const marketCapFormat = (currencies, btcNode, quoteSymbol) => {
       supply: currency.currentSupply.toLocaleString(),
       marketCap: asCurrency(calculatePriceFromBtc(currency.marketCap, priceOfBtc), quoteSymbol),
       marketCapRank: currency.marketCapRank,
-      price: asCurrency(lastPrice, quoteSymbol, 8),
-      percentChange: percentChange,
-      volume: volume,
+      price: getPrice(currency.markets, btcNode, quoteSymbol),
+      secondaryQuote,
+      percentChange,
+      volume,
     };
   });
 };
