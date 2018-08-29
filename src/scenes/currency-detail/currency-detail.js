@@ -11,6 +11,7 @@ import { Chart } from './components/chart';
 import { CurrencyInformationItem } from './components/currency-information-item';
 import { MarketInfo } from './components/market-info';
 import { Resolutions, ResolutionGroup, StartEndGroup } from './components/chart-tools';
+import { formatCurrency } from '../../library/currency-formatter';
 
 const CURRENCY_QUERY = `
 query Currency($currencySymbol: String!) {
@@ -22,13 +23,11 @@ query Currency($currencySymbol: String!) {
     currencySymbol
     marketCap
     marketCapRank
-    markets(aggregation: VWAP) {
-      data {
-        marketSymbol
-        ticker {
-          last
-          percentChange
-        }
+    markets(aggregation: VWA) {
+      marketSymbol
+      ticker {
+        last
+        percentChange
       }
     }
   }
@@ -45,7 +44,7 @@ export class CurrencyDetailComponent extends React.Component {
     this.state = {
       resolution: Resolutions.find(r => r.value === '_1h'),
       start: moment()
-        .subtract(3, 'months')
+        .subtract(1, 'month')
         .unix(),
       end: moment().unix(),
     };
@@ -69,12 +68,26 @@ export class CurrencyDetailComponent extends React.Component {
       return <ActivityIndicator />;
     }
 
-    let markets = currency.markets.data;
+    let markets = currency.markets;
     let market = markets.find(market => {
       return market.marketSymbol.endsWith(
         this.props.navigation.getParam('quoteSymbol').toUpperCase()
       );
     });
+
+    let marketCap = 0;
+    let secondaryMarketCap = 0;
+    if (market) {
+      marketCap = formatCurrency(
+        Math.round(market.ticker.last * this.props.data.currency.currentSupply),
+        this.props.navigation.getParam('quoteSymbol')
+      );
+      secondaryMarketCap = formatCurrency(
+        Math.round(market.ticker.last * this.props.data.currency.currentSupply),
+        this.props.navigation.getParam('secondaryQuoteSymbol')
+      );
+    }
+
     let price, change, isPositive;
     if (!market) {
       price = 0;
@@ -125,7 +138,7 @@ export class CurrencyDetailComponent extends React.Component {
         <View style={style.currencyInformationContainer}>
           <CurrencyInformationItem
             name="Market Cap"
-            value={this.props.data.currency.marketCap.toLocaleString()}
+            value={`${marketCap}\n${secondaryMarketCap}`}
           />
           <CurrencyInformationItem
             name="Current Supply"

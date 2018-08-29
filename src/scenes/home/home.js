@@ -40,16 +40,14 @@ query AllCurrencies ($filter:String, $favorites:[String]) {
       currencyName
       currentSupply
       currencySymbol
-      markets(aggregation: VWAP) {
-        data {
-          id
-          marketSymbol
-          ticker {
-            last
-            percentChange
-            baseVolume
-            quoteVolume
-          }
+      markets(aggregation: VWA) {
+        id
+        marketSymbol
+        ticker {
+          last
+          percentChange
+          baseVolume
+          quoteVolume
         }
       }
     }
@@ -74,27 +72,23 @@ query AllCurrencies ($filter:String, $favorites:[String]) {
       currencyName
       currentSupply
       currencySymbol
-      markets(aggregation: VWAP) {
-        data {
-          id
-          marketSymbol
-          ticker {
-            last
-            percentChange
-            baseVolume
-            quoteVolume
-          }
+      markets(aggregation: VWA) {
+        id
+        marketSymbol
+        ticker {
+          last
+          percentChange
+          baseVolume
+          quoteVolume
         }
       }
     }
   }
   bitcoin: currency(currencySymbol: "BTC") {
     markets {
-      data {
-        marketSymbol
-        ticker {
-          last
-        }
+      marketSymbol
+      ticker {
+        last
       }
     }
   }
@@ -126,7 +120,7 @@ export class HomeComponent extends React.Component {
 
   updateQuote() {
     getQuotes().then(quotes => {
-      this.setState({ quoteSymbol: quotes.primary });
+      this.setState({ quoteSymbol: quotes.primary, secondaryQuoteSymbol: quotes.secondary });
     });
   }
 
@@ -170,7 +164,11 @@ export class HomeComponent extends React.Component {
           }
         >
           {searchBar}
-          <CurrencyList {...this.props} quoteSymbol={this.state.quoteSymbol} />
+          <CurrencyList
+            {...this.props}
+            quoteSymbol={this.state.quoteSymbol}
+            secondaryQuoteSymbol={this.state.secondaryQuoteSymbol}
+          />
         </ScrollView>
       </View>
     );

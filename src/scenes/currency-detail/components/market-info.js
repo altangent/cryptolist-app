@@ -15,12 +15,10 @@ query Exchanges ($currencySymbol: String) {
       primaryColor
       secondaryColor
       markets(filter: { baseSymbol_like: $currencySymbol }) {
-        data {
-          marketSymbol
-          ticker {
-            baseVolume
-            quoteVolume
-          }
+        marketSymbol
+        ticker {
+          baseVolume
+          quoteVolume
         }
       }
     }
@@ -37,8 +35,8 @@ export class MarketInfoComponent extends React.Component {
   }
 
   getExchangeVolume(exchange) {
-    if (exchange.markets && exchange.markets.data) {
-      let volume = exchange.markets.data.reduce((aggregator, market) => {
+    if (exchange.markets && exchange.markets) {
+      let volume = exchange.markets.reduce((aggregator, market) => {
         return aggregator + market.ticker.baseVolume;
       }, 0);
 
@@ -67,7 +65,7 @@ export class MarketInfoComponent extends React.Component {
   getQuoteVolume(exchanges) {
     return exchanges
       .map(exchange =>
-        exchange.markets.data.map(market => {
+        exchange.markets.map(market => {
           let [exchange, pair] = market.marketSymbol.split(':');
           let [, quote] = pair.split('/');
           return {

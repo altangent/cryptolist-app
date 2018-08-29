@@ -16,15 +16,12 @@ query Currency(
 ) {
   currency(currencySymbol: $currencySymbol) {
     id
-    markets(aggregation: VWAP, filter: {quoteSymbol_like: $quoteSymbol}) {
-      data {
-        marketSymbol
-        ohlcv(resolution: $resolution, start: $start, end: $end, sort:OLD_FIRST)
-      }
+    markets(aggregation: VWA, filter: {quoteSymbol_like: $quoteSymbol}) {
+      marketSymbol
+      ohlcv(resolution: $resolution, start: $start, end: $end, sort:OLD_FIRST)
     }
   }
 }
-
 `;
 
 export class ChartComponent extends React.PureComponent {
@@ -43,7 +40,7 @@ export class ChartComponent extends React.PureComponent {
       return <ActivityIndicator />;
     }
 
-    let markets = currency.markets.data;
+    let markets = currency.markets;
     let market = markets[0];
 
     if (!market)

@@ -32,6 +32,7 @@ export class CurrencyList extends React.Component {
           navigate('Detail', {
             currencySymbol: item.symbol,
             quoteSymbol: this.props.quoteSymbol,
+            secondaryQuoteSymbol: this.props.secondaryQuoteSymbol,
             currencyName: item.name,
           });
         }}
@@ -46,6 +47,7 @@ export class CurrencyList extends React.Component {
           navigate('Detail', {
             currencySymbol: item.symbol,
             quoteSymbol: this.props.quoteSymbol,
+            secondaryQuoteSymbol: this.props.secondaryQuoteSymbol,
             currencyName: item.name,
           });
         }}
