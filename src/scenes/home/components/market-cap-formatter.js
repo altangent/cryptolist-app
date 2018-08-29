@@ -81,7 +81,7 @@ export const marketCapFormat = (currencies, btcNode, quoteSymbol, secondaryQuote
 
     if (secondaryQuoteSymbol) {
       secondaryQuote = {
-        percentChange: getPercentageChange(currency.markets, btcNode, quoteSymbol),
+        percentChange: getPercentageChange(currency.markets, btcNode, secondaryQuoteSymbol),
         price: getPrice(currency.markets, btcNode, secondaryQuoteSymbol),
       };
     }
