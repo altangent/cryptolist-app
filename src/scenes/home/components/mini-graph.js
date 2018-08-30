@@ -60,6 +60,9 @@ export const MiniGraphComponent = ({ data, width, height, isPositive }) => {
     } else return null;
   }
 
+  prices = prices.filter(item => item);
+  if (!prices.length) return null;
+
   let high = Math.max(...prices);
   let low = Math.min(...prices);
   let denominator = high - low;

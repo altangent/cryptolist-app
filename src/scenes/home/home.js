@@ -155,6 +155,7 @@ export class HomeComponent extends React.Component {
 
   toggleSearchVisibility = () => {
     this.setState({ searchVisibile: !this.state.searchVisibile });
+    this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
   };
 
   refresh() {
