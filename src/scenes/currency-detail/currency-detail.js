@@ -55,7 +55,9 @@ export class CurrencyDetailComponent extends React.Component {
   };
 
   changeResolution(resolution) {
-    this.setState({ resolution });
+    let currentCandleCount = (this.state.end - this.state.start) / this.state.resolution.seconds;
+    let start = this.state.end - currentCandleCount * resolution.seconds;
+    this.setState({ resolution, start });
   }
 
   changeStartEnd(start, end) {
