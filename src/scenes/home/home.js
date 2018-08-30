@@ -16,12 +16,14 @@ import { SearchModal } from './components/search-modal';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getFavorites } from '../../library/currency-favorite';
 import { getQuotes } from '../../library/quote-currency-persister';
+import { ResultListPaginator } from './components/result-list-paginator';
 
 const DEFAULT_FILTER = '%';
+const MAX_PER_PAGE = 20;
 const CURRENCY_QUERY = `
-query AllCurrencies ($filter:String, $favorites:[String]) {
+query AllCurrencies ($filter:String, $favorites:[String], $favoritesPage:Page, $page:Page) {
   favorites: currencies(
-    page: { skip: 0, limit: 20 },
+    page: $favoritesPage,
     sort: { marketCapRank: ASC },
     filter: {
       _and: [
@@ -53,7 +55,7 @@ query AllCurrencies ($filter:String, $favorites:[String]) {
     }
   }
   currencies(
-    page: { skip: 0, limit: 20 },
+    page: $page,
     sort: { marketCapRank: ASC },
     filter: {
       _and: [
@@ -67,6 +69,7 @@ query AllCurrencies ($filter:String, $favorites:[String]) {
       ]
     }
   ) {
+    totalCount
     data {
       id
       currencyName
@@ -103,6 +106,9 @@ export class HomeComponent extends React.Component {
     this.refresh = this.refresh.bind(this);
     this.search = this.search.bind(this);
     this.updateQuote = this.updateQuote.bind(this);
+    this.goBack = this.goBack.bind(this);
+    this.goForward = this.goForward.bind(this);
+    this.paginate = this.paginate.bind(this);
 
     this.updateQuote();
     this.willFocusSubscription = props.navigation.addListener('willFocus', this.updateQuote);
@@ -111,6 +117,7 @@ export class HomeComponent extends React.Component {
       refreshing: false,
       searchVisibile: false,
       quoteSymbol: 'BTC',
+      page: 1,
     };
   }
 
@@ -151,6 +158,40 @@ export class HomeComponent extends React.Component {
     this.props.getData({ filter: query });
   }
 
+  paginate(page) {
+    this.setState({ page });
+    getFavorites().then(favoites => {
+      let favoritesCount = favoites.length;
+      let favoritesToRequest = Math.min(MAX_PER_PAGE - favoritesCount * page, favoritesCount);
+      let favoritesSkip = MAX_PER_PAGE * (page - 1);
+      let favoritesLimit = Math.max(favoritesToRequest - favoritesSkip, 0);
+      let favoritesPage = {
+        skip: favoritesSkip,
+        limit: favoritesLimit,
+      };
+
+      let restLimit = page * MAX_PER_PAGE - favoritesSkip - favoritesLimit;
+      let restSkip = Math.max((page - 1) * MAX_PER_PAGE - favoritesCount, 0);
+      let restPage = {
+        skip: restSkip,
+        limit: restLimit,
+      };
+
+      this.props.getData({
+        page: restPage,
+        favoritesPage: favoritesPage,
+      });
+    });
+  }
+
+  goBack() {
+    this.paginate(this.state.page - 1);
+  }
+
+  goForward() {
+    this.paginate(this.state.page + 1);
+  }
+
   render() {
     if (!this.props.data.currencies) {
       return <ActivityIndicator />;
@@ -169,6 +210,12 @@ export class HomeComponent extends React.Component {
             {...this.props}
             quoteSymbol={this.state.quoteSymbol}
             secondaryQuoteSymbol={this.state.secondaryQuoteSymbol}
+          />
+          <ResultListPaginator
+            onBackPress={this.goBack}
+            onForwardPress={this.goForward}
+            forwardDisabled={false}
+            backDisabled={this.state.page <= 1}
           />
         </ScrollView>
       </View>
@@ -205,6 +252,8 @@ export class Home extends React.Component {
   }
 
   render() {
+    let favoritesCount = this.state.favorites.length;
+    let favoritesToRequest = Math.min(favoritesCount, MAX_PER_PAGE);
     return (
       this.state.favoritesLoaded && (
         <QueryComponent
@@ -213,6 +262,14 @@ export class Home extends React.Component {
           variables={() => ({
             favorites: this.state.favorites.length ? this.state.favorites : ['FAKEFAKE'],
             filter: DEFAULT_FILTER,
+            page: {
+              skip: 0,
+              limit: MAX_PER_PAGE - favoritesToRequest,
+            },
+            favoritesPage: {
+              skip: 0,
+              limit: favoritesToRequest,
+            },
           })}
           {...this.props}
         />

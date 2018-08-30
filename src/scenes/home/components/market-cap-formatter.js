@@ -75,8 +75,6 @@ export const marketCapFormat = (currencies, btcNode, quoteSymbol, secondaryQuote
       : null;
     const percentChange = getPercentageChange(currency.markets, btcNode, quoteSymbol);
     const btcMarket = currency.markets.find(market => market.marketSymbol.endsWith('BTC'));
-    const priceInBtc = btcMarket && btcMarket.ticker ? btcMarket.ticker.last : 1;
-
     const volume = get24HourVolume(market, btcMarket, priceOfBtc, quoteSymbol);
 
     if (secondaryQuoteSymbol) {
