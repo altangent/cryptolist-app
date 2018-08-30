@@ -115,7 +115,7 @@ export class StartEndGroup extends React.Component {
       <View>
         <View style={style.resolutionContainer}>
           <CLButton
-            title={moment(this.props.start * 1000).format('M/D/YY h:ma')}
+            title={moment(this.props.start * 1000).format('M/D/YY h:mma')}
             onPress={() => this.showPicker('start', this.props.start * 1000)}
           />
           <CLButton

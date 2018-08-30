@@ -44,7 +44,7 @@ export class CurrencyDetailComponent extends React.Component {
     this.state = {
       resolution: Resolutions.find(r => r.value === '_1h'),
       start: moment()
-        .subtract(1, 'month')
+        .subtract(2, 'weeks')
         .unix(),
       end: moment().unix(),
     };

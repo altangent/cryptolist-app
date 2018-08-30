@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { CLText } from '../../../components/cl-text';
 import { PieChart } from 'react-native-svg-charts';
 import { Query } from 'regraph-request';
+import { currencyColor } from '../../../library/currency-formatter';
 
 const MARKETS_QUERY = `
 query Exchanges ($currencySymbol: String) {
@@ -31,6 +32,8 @@ export class MarketInfoComponent extends React.Component {
     super(props);
 
     this.getExchangeVolume = this.getExchangeVolume.bind(this);
+    this.getExchangesVolume = this.getExchangesVolume.bind(this);
+    this.getQuoteVolume = this.getQuoteVolume.bind(this);
     this._renderListItem = this._renderListItem.bind(this);
   }
 
@@ -130,7 +133,7 @@ export class MarketInfoComponent extends React.Component {
       value: quoteVolume[value],
       key: `quote-${value}`,
       svg: {
-        fill: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6),
+        fill: currencyColor(value),
       },
     }));
     let totalQuoteVolume = Object.values(quoteVolume).reduce(
@@ -143,7 +146,7 @@ export class MarketInfoComponent extends React.Component {
         volume: quoteVolume[value],
         percent: quoteVolume[value] / totalQuoteVolume,
         key: value,
-        color: '#' + (((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(0, 6),
+        color: currencyColor(value),
       }))
       .sort((a, b) => (a.volume > b.volume ? -1 : 1));
     let quoteVolumeWithPercentagesSlice = quoteVolumeWithPercentages.slice(0, 4);
