@@ -121,6 +121,7 @@ export class HomeComponent extends React.Component {
       quoteSymbol: 'BTC',
       search: '',
       page: 1,
+      totalPages: 0,
     };
   }
 
@@ -128,6 +129,15 @@ export class HomeComponent extends React.Component {
     navigation: PropTypes.object.isRequired,
     getData: PropTypes.func.isRequired,
   };
+
+  static getDerivedStateFromProps(props) {
+    if (!props.data.currencies) return null;
+    let total = props.data.currencies.totalCount + props.data.favorites.totalCount;
+    let totalPages = Math.ceil(total / MAX_PER_PAGE);
+    return {
+      totalPages,
+    };
+  }
 
   updateQuote() {
     getQuotes().then(quotes => {
@@ -230,7 +240,7 @@ export class HomeComponent extends React.Component {
           <ResultListPaginator
             onBackPress={this.goBack}
             onForwardPress={this.goForward}
-            forwardDisabled={false}
+            forwardDisabled={this.state.page >= this.state.totalPages}
             backDisabled={this.state.page <= 1}
           />
         </ScrollView>
