@@ -109,6 +109,7 @@ export class HomeComponent extends React.Component {
     this.goBack = this.goBack.bind(this);
     this.goForward = this.goForward.bind(this);
     this.paginate = this.paginate.bind(this);
+    this.scrollView = null;
 
     this.updateQuote();
     this.willFocusSubscription = props.navigation.addListener('willFocus', this.updateQuote);
@@ -177,10 +178,14 @@ export class HomeComponent extends React.Component {
         limit: restLimit,
       };
 
-      this.props.getData({
-        page: restPage,
-        favoritesPage: favoritesPage,
-      });
+      this.props
+        .getData({
+          page: restPage,
+          favoritesPage: favoritesPage,
+        })
+        .then(() => {
+          this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
+        });
     });
   }
 
@@ -201,6 +206,7 @@ export class HomeComponent extends React.Component {
     return (
       <View style={styles.containerView}>
         <ScrollView
+          ref={scroll => (this.scrollView = scroll)}
           refreshControl={
             <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />
           }
