@@ -9,12 +9,14 @@ export class SearchModal extends React.Component {
     this.changeText = this.changeText.bind(this);
     this.submit = this.submit.bind(this);
   }
+
   state = {
-    searchText: '',
+    searchText: this.props.text,
   };
 
   static propTypes = {
     onUpdate: PropTypes.func,
+    text: PropTypes.string,
   };
 
   submit() {
@@ -45,6 +47,7 @@ export class SearchModal extends React.Component {
             autoCapitalize="none"
             clearIcon={null}
             platform="ios"
+            value={this.state.searchText}
           />
         </View>
       </View>

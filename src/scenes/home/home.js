@@ -37,6 +37,7 @@ query AllCurrencies ($filter:String, $favorites:[String], $favoritesPage:Page, $
       ]
     }
   ) {
+    totalCount
     data {
       id
       currencyName
@@ -118,6 +119,7 @@ export class HomeComponent extends React.Component {
       refreshing: false,
       searchVisibile: false,
       quoteSymbol: 'BTC',
+      search: '',
       page: 1,
     };
   }
@@ -154,39 +156,46 @@ export class HomeComponent extends React.Component {
 
   search(query) {
     if (query === null) {
-      query = { filter: DEFAULT_FILTER };
+      query = '%';
     }
-    this.props.getData({ filter: query });
+
+    this.paginate(1)
+      .then(() => {
+        return this.props.getData({ filter: query });
+      })
+      .then(() => {
+        this.setState({ search: query.replace(/%/g, '') });
+      });
   }
 
   paginate(page) {
     this.setState({ page });
-    getFavorites().then(favoites => {
-      let favoritesCount = favoites.length;
-      let favoritesToRequest = Math.min(MAX_PER_PAGE - favoritesCount * page, favoritesCount);
-      let favoritesSkip = MAX_PER_PAGE * (page - 1);
-      let favoritesLimit = Math.max(favoritesToRequest - favoritesSkip, 0);
-      let favoritesPage = {
-        skip: favoritesSkip,
-        limit: favoritesLimit,
-      };
+    return getFavorites()
+      .then(favoites => {
+        let favoritesCount = favoites.length;
+        let favoritesToRequest = Math.min(MAX_PER_PAGE - favoritesCount * page, favoritesCount);
+        let favoritesSkip = MAX_PER_PAGE * (page - 1);
+        let favoritesLimit = Math.max(favoritesToRequest - favoritesSkip, 0);
+        let favoritesPage = {
+          skip: favoritesSkip,
+          limit: favoritesLimit,
+        };
 
-      let restLimit = page * MAX_PER_PAGE - favoritesSkip - favoritesLimit;
-      let restSkip = Math.max((page - 1) * MAX_PER_PAGE - favoritesCount, 0);
-      let restPage = {
-        skip: restSkip,
-        limit: restLimit,
-      };
+        let restLimit = page * MAX_PER_PAGE - favoritesSkip - favoritesLimit;
+        let restSkip = Math.max((page - 1) * MAX_PER_PAGE - favoritesCount, 0);
+        let restPage = {
+          skip: restSkip,
+          limit: restLimit,
+        };
 
-      this.props
-        .getData({
+        return this.props.getData({
           page: restPage,
           favoritesPage: favoritesPage,
-        })
-        .then(() => {
-          this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
         });
-    });
+      })
+      .then(() => {
+        this.scrollView.scrollTo({ x: 0, y: 0, animated: true });
+      });
   }
 
   goBack() {
@@ -202,7 +211,6 @@ export class HomeComponent extends React.Component {
       return <ActivityIndicator />;
     }
 
-    let searchBar = this.state.searchVisibile ? <SearchModal onUpdate={this.search} /> : null;
     return (
       <View style={styles.containerView}>
         <ScrollView
@@ -211,7 +219,9 @@ export class HomeComponent extends React.Component {
             <RefreshControl refreshing={this.state.refreshing} onRefresh={() => this.refresh()} />
           }
         >
-          {searchBar}
+          {this.state.searchVisibile && (
+            <SearchModal text={this.state.search} onUpdate={this.search} />
+          )}
           <CurrencyList
             {...this.props}
             quoteSymbol={this.state.quoteSymbol}
